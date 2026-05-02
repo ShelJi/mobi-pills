@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mobile Shop System{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        darkbg: '#111827',
+                        darkcard: '#1f2937'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Transitions for smooth dark mode */
+        body { transition: background-color 0.3s, color 0.3s; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .dark .glass-panel {
+            background: rgba(31, 41, 55, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        /* Hide scrollbar for clean look */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 dark:bg-darkbg dark:text-gray-200 antialiased h-screen flex overflow-hidden">
+
+    <!-- Mobile Sidebar Overlay -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-gray-900/50 z-20 hidden lg:hidden backdrop-blur-sm transition-opacity opacity-0"></div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-white dark:bg-darkcard border-r border-gray-200 dark:border-gray-700 flex flex-col transition-transform transform -translate-x-full lg:translate-x-0 lg:static z-30">
+        <div class="h-16 flex items-center px-6 border-b border-gray-200 dark:border-gray-700">
+            <i class="fa-solid fa-mobile-screen-button text-primary text-2xl mr-3"></i>
+            <span class="font-bold text-xl tracking-tight">MobiPills</span>
+        </div>
+        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+            <a href="{% url 'dashboard' %}" class="flex items-center px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors {% if request.resolver_match.url_name == 'dashboard' %}bg-blue-50 text-primary dark:bg-blue-900/30{% endif %}">
+                <i class="fa-solid fa-chart-pie w-6"></i>
+                <span class="font-medium">Dashboard</span>
+            </a>
+            <a href="{% url 'billing' %}" class="flex items-center px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors {% if request.resolver_match.url_name == 'billing' %}bg-blue-50 text-primary dark:bg-blue-900/30{% endif %}">
+                <i class="fa-solid fa-file-invoice-dollar w-6"></i>
+                <span class="font-medium">Billing (POS)</span>
+            </a>
+            <a href="{% url 'products' %}" class="flex items-center px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors {% if request.resolver_match.url_name == 'products' %}bg-blue-50 text-primary dark:bg-blue-900/30{% endif %}">
+                <i class="fa-solid fa-box w-6"></i>
+                <span class="font-medium">Products</span>
+            </a>
+            <a href="{% url 'customers' %}" class="flex items-center px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors {% if request.resolver_match.url_name == 'customers' %}bg-blue-50 text-primary dark:bg-blue-900/30{% endif %}">
+                <i class="fa-solid fa-users w-6"></i>
+                <span class="font-medium">Customers</span>
+            </a>
+            <a href="{% url 'sales' %}" class="flex items-center px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors {% if request.resolver_match.url_name == 'sales' %}bg-blue-50 text-primary dark:bg-blue-900/30{% endif %}">
+                <i class="fa-solid fa-clock-rotate-left w-6"></i>
+                <span class="font-medium">Sales History</span>
+            </a>
+        </nav>
+        <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+            <div class="flex items-center mb-4 px-2">
+                <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold mr-3">
+                    {{ request.user.username|make_list|first|upper }}
+                </div>
+                <div>
+                    <p class="text-sm font-semibold">{{ request.user.username }}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                        {% if request.user.is_superuser %}Admin{% else %}Staff{% endif %}
+                    </p>
+                </div>
+            </div>
+            <form action="#" method="post">
+                {% csrf_token %}
+                <button type="submit" class="w-full flex items-center justify-center py-2 px-4 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors">
+                    <i class="fa-solid fa-arrow-right-from-bracket mr-2"></i> Logout
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col h-full overflow-hidden relative">
+        <!-- Header -->
+        <header class="h-16 glass-panel border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4 sm:px-6 z-10 sticky top-0">
+            <div class="flex items-center overflow-hidden">
+                <button id="mobileMenuBtn" class="lg:hidden p-2 mr-3 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors flex-shrink-0">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+                <h2 class="text-lg sm:text-xl font-semibold truncate">{% block header %}Dashboard{% endblock %}</h2>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button id="themeToggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                    <i class="fa-solid fa-moon text-xl" id="themeIcon"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <main class="flex-1 overflow-y-auto p-6 relative">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- Theme Toggle Script -->
+    <script>
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const html = document.documentElement;
+
+        // Check local storage or system preference
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+            themeIcon.classList.replace('fa-moon', 'fa-sun');
+        } else {
+            html.classList.remove('dark');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            if (html.classList.contains('dark')) {
+                localStorage.theme = 'dark';
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+            } else {
+                localStorage.theme = 'light';
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
+            }
+        });
+
+        // Mobile Sidebar Toggle
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+
+        function toggleSidebar() {
+            const isClosed = sidebar.classList.contains('-translate-x-full');
+            if (isClosed) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+                setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('opacity-0');
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+            }
+        }
+
+        if (mobileMenuBtn && overlay) {
+            mobileMenuBtn.addEventListener('click', toggleSidebar);
+            overlay.addEventListener('click', toggleSidebar);
+        }
+    </script>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>

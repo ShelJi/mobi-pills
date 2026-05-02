@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Mobile Shop{% endblock %}
+{% block header %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <!-- Daily Sales Card -->
+    <div class="bg-white dark:bg-darkcard rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow relative overflow-hidden group">
+        <div class="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div class="flex items-center justify-between relative z-10">
+            <div>
+                <p class="text-sm text-gray-500 dark:text-gray-400 font-medium tracking-wide uppercase">Daily Sales</p>
+                <h3 class="text-3xl font-bold text-gray-800 dark:text-white mt-2" id="dailySales">₹0.00</h3>
+            </div>
+            <div class="w-14 h-14 rounded-2xl bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-400 flex items-center justify-center text-2xl shadow-inner">
+                <i class="fa-solid fa-calendar-day"></i>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Weekly Sales Card -->
+    <div class="bg-white dark:bg-darkcard rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow relative overflow-hidden group">
+        <div class="absolute inset-0 bg-gradient-to-r from-green-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div class="flex items-center justify-between relative z-10">
+            <div>
+                <p class="text-sm text-gray-500 dark:text-gray-400 font-medium tracking-wide uppercase">Weekly Sales</p>
+                <h3 class="text-3xl font-bold text-gray-800 dark:text-white mt-2" id="weeklySales">₹0.00</h3>
+            </div>
+            <div class="w-14 h-14 rounded-2xl bg-green-100 text-green-600 dark:bg-green-900/40 dark:text-green-400 flex items-center justify-center text-2xl shadow-inner">
+                <i class="fa-solid fa-calendar-week"></i>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Monthly Sales Card -->
+    <div class="bg-white dark:bg-darkcard rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow relative overflow-hidden group">
+        <div class="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div class="flex items-center justify-between relative z-10">
+            <div>
+                <p class="text-sm text-gray-500 dark:text-gray-400 font-medium tracking-wide uppercase">Monthly Sales</p>
+                <h3 class="text-3xl font-bold text-gray-800 dark:text-white mt-2" id="monthlySales">₹0.00</h3>
+            </div>
+            <div class="w-14 h-14 rounded-2xl bg-purple-100 text-purple-600 dark:bg-purple-900/40 dark:text-purple-400 flex items-center justify-center text-2xl shadow-inner">
+                <i class="fa-solid fa-calendar-days"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Recent Transactions -->
+    <div class="lg:col-span-2 bg-white dark:bg-darkcard rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+        <div class="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/30">
+            <h3 class="font-bold text-lg text-gray-800 dark:text-gray-100">Recent Transactions</h3>
+            <a href="{% url 'sales' %}" class="text-sm text-primary hover:text-blue-700 dark:hover:text-blue-400 font-medium transition-colors flex items-center">
+                View All <i class="fa-solid fa-arrow-right ml-1 text-xs"></i>
+            </a>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-white dark:bg-darkcard text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider border-b border-gray-100 dark:border-gray-700">
+                        <th class="py-4 px-6 font-medium">Invoice</th>
+                        <th class="py-4 px-6 font-medium">Customer</th>
+                        <th class="py-4 px-6 font-medium">Amount</th>
+                        <th class="py-4 px-6 font-medium">Date</th>
+                    </tr>
+                </thead>
+                <tbody id="recentOrdersBody" class="divide-y divide-gray-100 dark:divide-gray-700 text-sm">
+                    <!-- Data loaded via JS -->
+                </tbody>
+            </table>
+            <div id="ordersLoading" class="p-10 text-center text-gray-400 dark:text-gray-500">
+                <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3 text-primary"></i>
+                <p class="text-sm">Loading transactions...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Low Stock Alerts -->
+    <div class="bg-white dark:bg-darkcard rounded-xl shadow-sm border border-red-100 dark:border-red-900/30 overflow-hidden relative">
+        <div class="absolute top-0 left-0 w-full h-1 bg-red-500"></div>
+        <div class="p-6 border-b border-gray-100 dark:border-gray-700 flex items-center space-x-2 bg-gray-50/50 dark:bg-gray-800/30">
+            <div class="w-8 h-8 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-500">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="font-bold text-lg text-gray-800 dark:text-gray-100">Low Stock Alerts</h3>
+        </div>
+        <div class="p-4" id="lowStockBody">
+            <!-- Data loaded via JS -->
+            <div id="stockLoading" class="p-10 text-center text-gray-400 dark:text-gray-500">
+                <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3 text-red-500"></i>
+                <p class="text-sm">Checking inventory...</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Fetch Dashboard Stats
+        fetch('/api/orders/dashboard_stats/')
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('dailySales').textContent = `₹${parseFloat(data.daily_sales).toFixed(2)}`;
+                document.getElementById('weeklySales').textContent = `₹${parseFloat(data.weekly_sales).toFixed(2)}`;
+                document.getElementById('monthlySales').textContent = `₹${parseFloat(data.monthly_sales).toFixed(2)}`;
+                
+                const tbody = document.getElementById('recentOrdersBody');
+                document.getElementById('ordersLoading').style.display = 'none';
+                
+                if (data.recent_orders.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-gray-500">
+                        <div class="flex flex-col items-center justify-center">
+                            <i class="fa-solid fa-receipt text-3xl mb-2 text-gray-300 dark:text-gray-600"></i>
+                            <span>No recent transactions</span>
+                        </div>
+                    </td></tr>`;
+                    return;
+                }
+                
+                data.recent_orders.forEach(order => {
+                    const date = new Date(order.created_at).toLocaleDateString();
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition-colors group";
+                    tr.innerHTML = `
+                        <td class="py-4 px-6 font-medium text-primary group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors">
+                            <i class="fa-solid fa-file-invoice mr-1 text-gray-400 group-hover:text-primary transition-colors"></i> 
+                            ${order.invoice_number || 'Draft'}
+                        </td>
+                        <td class="py-4 px-6 text-gray-700 dark:text-gray-300">
+                            <div class="flex items-center">
+                                <div class="w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xs mr-2 font-bold text-gray-600 dark:text-gray-400">
+                                    ${order.customer_details ? order.customer_details.name.charAt(0).toUpperCase() : 'W'}
+                                </div>
+                                ${order.customer_details ? order.customer_details.name : 'Walk-in Customer'}
+                            </div>
+                        </td>
+                        <td class="py-4 px-6 font-semibold text-gray-800 dark:text-gray-200">₹${parseFloat(order.final_amount).toFixed(2)}</td>
+                        <td class="py-4 px-6 text-gray-500 text-sm">${date}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            })
+            .catch(err => {
+                document.getElementById('ordersLoading').innerHTML = `<p class="text-red-500"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Failed to load data</p>`;
+            });
+
+        // Fetch Low Stock
+        fetch('/api/products/low_stock/')
+            .then(res => res.json())
+            .then(data => {
+                const container = document.getElementById('lowStockBody');
+                document.getElementById('stockLoading').style.display = 'none';
+                
+                if (data.length === 0) {
+                    container.innerHTML = `
+                    <div class="py-8 flex flex-col items-center justify-center text-gray-500">
+                        <i class="fa-solid fa-check-circle text-4xl mb-3 text-green-400 opacity-50"></i>
+                        <p class="text-sm font-medium">All products are sufficiently stocked.</p>
+                    </div>`;
+                    return;
+                }
+                
+                data.forEach(product => {
+                    const div = document.createElement('div');
+                    div.className = "flex items-center justify-between p-4 mb-3 bg-red-50/80 dark:bg-red-900/10 rounded-xl border border-red-100 dark:border-red-900/30 hover:border-red-300 dark:hover:border-red-800 transition-colors";
+                    div.innerHTML = `
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-lg bg-white dark:bg-darkcard border border-red-100 dark:border-red-900/50 flex items-center justify-center mr-3 shadow-sm">
+                                <i class="fa-solid fa-mobile-screen text-red-400"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-sm text-gray-800 dark:text-gray-200">${product.brand} ${product.name}</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">SKU/IMEI: <span class="font-mono">${product.imei || 'N/A'}</span></p>
+                            </div>
+                        </div>
+                        <div class="px-3 py-1.5 bg-red-100 text-red-700 dark:bg-red-900/60 dark:text-red-300 font-bold rounded-lg text-xs shadow-sm whitespace-nowrap flex flex-col items-center">
+                            <span class="text-lg leading-none mb-0.5">${product.stock_quantity}</span>
+                            <span class="uppercase tracking-wider" style="font-size: 0.6rem;">Left</span>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            })
+            .catch(err => {
+                document.getElementById('stockLoading').innerHTML = `<p class="text-red-500"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Failed to load alerts</p>`;
+            });
+    });
+</script>
+{% endblock %}

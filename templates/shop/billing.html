@@ -1,0 +1,484 @@
+{% extends 'base.html' %}
+
+{% block title %}Point of Sale - Mobile Shop{% endblock %}
+{% block header %}Billing / Point of Sale{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full pb-10">
+    <!-- Left: Product Selection -->
+    <div class="lg:col-span-2 flex flex-col h-[calc(100vh-140px)]">
+        <!-- Search and Filter -->
+        <div class="bg-white dark:bg-darkcard p-4 rounded-t-xl border border-b-0 border-gray-100 dark:border-gray-700 shadow-sm z-10 flex gap-3">
+            <div class="relative flex-1">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fa-solid fa-search text-gray-400"></i>
+                </div>
+                <input type="text" id="productSearch" class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary transition-all sm:text-sm" placeholder="Search by name, brand, or IMEI to add...">
+            </div>
+            <button class="bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg transition-colors" title="Scan Barcode/QR">
+                <i class="fa-solid fa-barcode text-lg"></i>
+            </button>
+        </div>
+
+        <!-- Product Grid -->
+        <div class="bg-white dark:bg-darkcard border border-gray-100 dark:border-gray-700 rounded-b-xl shadow-sm flex-1 overflow-y-auto p-4 custom-scrollbar">
+            <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4">
+                <!-- Products loaded via JS -->
+            </div>
+            <div id="productsLoading" class="p-10 text-center text-gray-400">
+                <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3 text-primary"></i>
+                <p>Loading products...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right: Cart & Checkout -->
+    <div class="bg-white dark:bg-darkcard border border-gray-100 dark:border-gray-700 rounded-xl shadow-sm flex flex-col h-[calc(100vh-140px)]">
+        <!-- Customer Info -->
+        <div class="p-4 border-b border-gray-100 dark:border-gray-700 bg-blue-50/30 dark:bg-blue-900/10 rounded-t-xl">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="font-bold text-gray-800 dark:text-white flex items-center">
+                    <i class="fa-solid fa-user-tag text-primary mr-2"></i> Customer Details
+                </h3>
+                <button class="text-xs text-primary hover:underline font-medium">Clear</button>
+            </div>
+            <div class="space-y-3">
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fa-solid fa-phone text-gray-400 text-xs"></i>
+                    </div>
+                    <input type="text" id="customerPhone" class="block w-full pl-9 pr-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-primary focus:border-primary" placeholder="Phone Number (Search/New)">
+                </div>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fa-solid fa-user text-gray-400 text-xs"></i>
+                    </div>
+                    <input type="text" id="customerName" class="block w-full pl-9 pr-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-primary focus:border-primary" placeholder="Customer Name">
+                </div>
+            </div>
+        </div>
+
+        <!-- Cart Items -->
+        <div class="flex-1 overflow-y-auto p-4 custom-scrollbar bg-gray-50/30 dark:bg-gray-900/20">
+            <div id="cartItems" class="space-y-3">
+                <!-- Cart items loaded via JS -->
+                <div id="emptyCart" class="flex flex-col items-center justify-center h-full text-gray-400 py-10">
+                    <i class="fa-solid fa-cart-arrow-down text-4xl mb-3 opacity-50"></i>
+                    <p class="text-sm font-medium">Cart is empty</p>
+                    <p class="text-xs mt-1">Select products to add them to cart</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary & Actions -->
+        <div class="p-5 border-t border-gray-100 dark:border-gray-700 bg-white dark:bg-darkcard rounded-b-xl shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-10">
+            <div class="space-y-2 mb-4 text-sm">
+                <div class="flex justify-between text-gray-600 dark:text-gray-400">
+                    <span>Subtotal</span>
+                    <span id="subtotal" class="font-medium text-gray-800 dark:text-gray-200">₹0.00</span>
+                </div>
+                
+                <div class="flex justify-between items-center text-gray-600 dark:text-gray-400">
+                    <span>Discount</span>
+                    <div class="flex items-center w-24">
+                        <span class="mr-1">₹</span>
+                        <input type="number" id="discount" value="0" min="0" class="w-full px-2 py-1 text-right text-sm border border-gray-300 dark:border-gray-600 rounded bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-1 focus:ring-primary">
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center text-gray-600 dark:text-gray-400">
+                    <span>Tax (GST 18%)</span>
+                    <span id="tax" class="font-medium text-gray-800 dark:text-gray-200">₹0.00</span>
+                </div>
+                
+                <div class="pt-3 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                    <span class="text-lg font-bold text-gray-900 dark:text-white">Total</span>
+                    <span id="total" class="text-2xl font-bold text-primary">₹0.00</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 mt-5">
+                <button onclick="saveDraft()" class="w-full py-3 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white rounded-lg font-bold shadow-sm transition-colors flex items-center justify-center">
+                    <i class="fa-solid fa-bookmark mr-2"></i> Save Draft
+                </button>
+                <button onclick="checkout()" class="w-full py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-bold shadow-md shadow-green-500/30 transition-all flex items-center justify-center transform active:scale-95">
+                    <i class="fa-solid fa-check-double mr-2"></i> Checkout
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Custom scrollbar for inner areas */
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 2px; }
+    .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; }
+    .custom-scrollbar:hover::-webkit-scrollbar-thumb { background: #cbd5e1; }
+    .dark .custom-scrollbar:hover::-webkit-scrollbar-thumb { background: #475569; }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let products = [];
+    let cart = [];
+    let customers = [];
+    const taxRate = 0.18; // 18% GST
+
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchProducts();
+        fetchCustomers();
+        
+        document.getElementById('productSearch').addEventListener('input', (e) => {
+            renderProducts(e.target.value);
+        });
+
+        document.getElementById('discount').addEventListener('input', updateCartSummary);
+
+        // Auto-load draft from localStorage if exists
+        loadDraftFromLocalStorage();
+
+        // Customer auto-complete logic
+        const phoneInput = document.getElementById('customerPhone');
+        phoneInput.addEventListener('input', (e) => {
+            const val = e.target.value;
+            const match = customers.find(c => c.phone && String(c.phone).includes(val));
+            if (match && val.length > 5) {
+                document.getElementById('customerName').value = match.name;
+                phoneInput.dataset.customerId = match.id;
+            } else {
+                phoneInput.dataset.customerId = '';
+            }
+        });
+    });
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    function fetchProducts() {
+        fetch('/api/products/')
+            .then(res => res.json())
+            .then(data => {
+                products = data.filter(p => p.stock_quantity > 0);
+                renderProducts();
+                document.getElementById('productsLoading').style.display = 'none';
+            });
+    }
+
+    function fetchCustomers() {
+        fetch('/api/customers/')
+            .then(res => res.json())
+            .then(data => customers = data);
+    }
+
+    function renderProducts(filterText = '') {
+        const grid = document.getElementById('productGrid');
+        grid.innerHTML = '';
+        
+        const filtered = products.filter(p => {
+            const search = filterText.toLowerCase();
+            return p.name.toLowerCase().includes(search) || 
+                   p.brand.toLowerCase().includes(search) || 
+                   (p.imei && p.imei.toLowerCase().includes(search));
+        });
+
+        filtered.forEach(product => {
+            const div = document.createElement('div');
+            div.className = "bg-gray-50 dark:bg-gray-800/80 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden cursor-pointer hover:border-primary dark:hover:border-primary hover:shadow-md transition-all group";
+            div.onclick = () => addToCart(product);
+            
+            // Generate initials or icon since we don't have real images yet
+            const initials = product.brand.substring(0, 1) + product.name.substring(0, 1);
+            
+            div.innerHTML = `
+                <div class="h-28 bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-800 flex items-center justify-center relative">
+                    <span class="text-3xl font-bold text-white/50 dark:text-white/20 tracking-wider">${initials.toUpperCase()}</span>
+                    <div class="absolute bottom-2 right-2 bg-black/60 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-md">
+                        Stock: ${product.stock_quantity}
+                    </div>
+                </div>
+                <div class="p-3">
+                    <p class="text-xs text-primary font-bold mb-1 uppercase tracking-wide">${product.brand}</p>
+                    <h4 class="font-semibold text-sm text-gray-800 dark:text-gray-200 leading-tight mb-2 truncate" title="${product.name}">${product.name}</h4>
+                    <div class="flex justify-between items-center mt-auto">
+                        <span class="font-bold text-gray-900 dark:text-white">₹${parseFloat(product.price).toFixed(2)}</span>
+                        <div class="w-7 h-7 rounded-full bg-white dark:bg-gray-700 shadow-sm border border-gray-200 dark:border-gray-600 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white group-hover:border-primary transition-colors">
+                            <i class="fa-solid fa-plus text-xs"></i>
+                        </div>
+                    </div>
+                </div>
+            `;
+            grid.appendChild(div);
+        });
+    }
+
+    function addToCart(product) {
+        const existing = cart.find(item => item.product.id === product.id);
+        if (existing) {
+            if (existing.quantity < product.stock_quantity) {
+                existing.quantity++;
+            } else {
+                alert('Cannot add more than available stock!');
+                return;
+            }
+        } else {
+            cart.push({
+                product: product,
+                quantity: 1,
+                price: parseFloat(product.price)
+            });
+        }
+        renderCart();
+        saveDraftToLocalStorage();
+    }
+
+    function updateQuantity(productId, delta) {
+        const item = cart.find(i => i.product.id === productId);
+        if (item) {
+            const newQuantity = item.quantity + delta;
+            if (newQuantity > 0 && newQuantity <= item.product.stock_quantity) {
+                item.quantity = newQuantity;
+            } else if (newQuantity <= 0) {
+                cart = cart.filter(i => i.product.id !== productId);
+            }
+            renderCart();
+            saveDraftToLocalStorage();
+        }
+    }
+
+    function removeFromCart(productId) {
+        cart = cart.filter(i => i.product.id !== productId);
+        renderCart();
+        saveDraftToLocalStorage();
+    }
+
+    function renderCart() {
+        const container = document.getElementById('cartItems');
+        const emptyState = document.getElementById('emptyCart');
+        
+        container.innerHTML = '';
+        
+        if (cart.length === 0) {
+            container.appendChild(emptyState);
+            emptyState.style.display = 'flex';
+        } else {
+            emptyState.style.display = 'none';
+            container.appendChild(emptyState); // Keep it in DOM
+            
+            cart.forEach(item => {
+                const total = item.price * item.quantity;
+                const div = document.createElement('div');
+                div.className = "bg-white dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-700 shadow-sm relative group";
+                div.innerHTML = `
+                    <div class="flex justify-between items-start mb-2 pr-6">
+                        <div class="truncate pr-2">
+                            <p class="font-semibold text-sm text-gray-800 dark:text-gray-200 truncate">${item.product.name}</p>
+                            <p class="text-xs text-gray-500">${item.product.brand}</p>
+                        </div>
+                        <span class="font-bold text-gray-900 dark:text-white">₹${total.toFixed(2)}</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between mt-2">
+                        <span class="text-xs text-gray-500 font-mono">₹${item.price.toFixed(2)}/ea</span>
+                        
+                        <div class="flex items-center bg-gray-100 dark:bg-gray-900 rounded-md border border-gray-200 dark:border-gray-700 overflow-hidden">
+                            <button onclick="updateQuantity(${item.product.id}, -1)" class="w-8 h-7 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                                <i class="fa-solid fa-minus text-[10px]"></i>
+                            </button>
+                            <span class="w-8 h-7 flex items-center justify-center font-semibold text-sm bg-white dark:bg-gray-800">${item.quantity}</span>
+                            <button onclick="updateQuantity(${item.product.id}, 1)" class="w-8 h-7 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                                <i class="fa-solid fa-plus text-[10px]"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <button onclick="removeFromCart(${item.product.id})" class="absolute top-2 right-2 w-6 h-6 rounded-full bg-red-50 dark:bg-red-900/30 text-red-500 flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-red-100 dark:hover:bg-red-900/50 transition-all">
+                        <i class="fa-solid fa-xmark text-xs"></i>
+                    </button>
+                `;
+                container.appendChild(div);
+            });
+        }
+        updateCartSummary();
+    }
+
+    function updateCartSummary() {
+        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        let discount = parseFloat(document.getElementById('discount').value) || 0;
+        
+        // Prevent discount from being greater than subtotal
+        if (discount > subtotal) {
+            discount = subtotal;
+            document.getElementById('discount').value = discount.toFixed(2);
+        }
+
+        const taxableAmount = subtotal - discount;
+        const tax = taxableAmount * taxRate;
+        const total = taxableAmount + tax;
+
+        document.getElementById('subtotal').textContent = `₹${subtotal.toFixed(2)}`;
+        document.getElementById('tax').textContent = `₹${tax.toFixed(2)}`;
+        document.getElementById('total').textContent = `₹${total.toFixed(2)}`;
+    }
+
+    // Auto-save drafts logic
+    function saveDraftToLocalStorage() {
+        const draft = {
+            cart,
+            customerPhone: document.getElementById('customerPhone').value,
+            customerName: document.getElementById('customerName').value,
+            discount: document.getElementById('discount').value
+        };
+        localStorage.setItem('posDraft', JSON.stringify(draft));
+    }
+
+    function loadDraftFromLocalStorage() {
+        const draftJSON = localStorage.getItem('posDraft');
+        if (draftJSON) {
+            try {
+                const draft = JSON.parse(draftJSON);
+                cart = draft.cart || [];
+                document.getElementById('customerPhone').value = draft.customerPhone || '';
+                document.getElementById('customerName').value = draft.customerName || '';
+                document.getElementById('discount').value = draft.discount || 0;
+                renderCart();
+            } catch (e) {
+                console.error("Draft corrupted");
+            }
+        }
+    }
+
+    async function ensureCustomer() {
+        const phone = document.getElementById('customerPhone').value.trim();
+        const name = document.getElementById('customerName').value.trim();
+        const customerId = document.getElementById('customerPhone').dataset.customerId;
+
+        if (!phone) return null; // No customer provided
+
+        if (customerId) return parseInt(customerId); // Existing customer
+
+        // Create new customer
+        if (!name) {
+            alert("Please provide a name for the new customer.");
+            throw new Error("Missing name");
+        }
+
+        const res = await fetch('/api/customers/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+            body: JSON.stringify({ name, phone })
+        });
+        
+        if (res.ok) {
+            const newCustomer = await res.json();
+            customers.push(newCustomer);
+            return newCustomer.id;
+        } else {
+            alert("Failed to create customer");
+            throw new Error("Failed customer creation");
+        }
+    }
+
+    async function submitOrder(status) {
+        if (cart.length === 0) {
+            alert("Cart is empty");
+            return;
+        }
+
+        try {
+            const customerId = await ensureCustomer();
+            
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const discount = parseFloat(document.getElementById('discount').value) || 0;
+            const tax = (subtotal - discount) * taxRate;
+            const total = subtotal - discount + tax;
+
+            const items = cart.map(i => ({
+                product: i.product.id,
+                quantity: i.quantity,
+                price_at_time: i.price
+            }));
+
+            const payload = {
+                status: status,
+                customer: customerId,
+                subtotal: subtotal.toFixed(2),
+                tax_amount: tax.toFixed(2),
+                discount: discount.toFixed(2),
+                final_amount: total.toFixed(2),
+                items: items
+            };
+
+            const btnCheckout = document.querySelector('button[onclick="checkout()"]');
+            const originalText = btnCheckout.innerHTML;
+            btnCheckout.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Processing...';
+            btnCheckout.disabled = true;
+
+            const res = await fetch('/api/orders/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                const orderData = await res.json();
+                
+                // Clear cart and draft
+                cart = [];
+                document.getElementById('customerPhone').value = '';
+                document.getElementById('customerName').value = '';
+                document.getElementById('customerPhone').dataset.customerId = '';
+                document.getElementById('discount').value = '0';
+                localStorage.removeItem('posDraft');
+                
+                renderCart();
+                fetchProducts(); // Refresh stock
+                
+                btnCheckout.innerHTML = '<i class="fa-solid fa-check mr-2"></i> Success!';
+                btnCheckout.classList.replace('bg-green-500', 'bg-blue-500');
+                
+                setTimeout(() => {
+                    btnCheckout.innerHTML = originalText;
+                    btnCheckout.disabled = false;
+                    btnCheckout.classList.replace('bg-blue-500', 'bg-green-500');
+                    if(status === 'Completed') alert(`Order Complete! Invoice: ${orderData.invoice_number}`);
+                    else alert('Draft Saved Successfully to Server.');
+                }, 1500);
+
+            } else {
+                alert("Failed to submit order.");
+                btnCheckout.innerHTML = originalText;
+                btnCheckout.disabled = false;
+            }
+
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    function saveDraft() {
+        submitOrder('Draft');
+    }
+
+    function checkout() {
+        if(confirm("Complete this order?")) {
+            submitOrder('Completed');
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,22 @@
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+
+@login_required(login_url='/admin/login/')
+def dashboard_view(request):
+    return render(request, 'shop/dashboard.html')
+
+@login_required(login_url='/admin/login/')
+def products_view(request):
+    return render(request, 'shop/products.html')
+
+@login_required(login_url='/admin/login/')
+def billing_view(request):
+    return render(request, 'shop/billing.html')
+
+@login_required(login_url='/admin/login/')
+def sales_view(request):
+    return render(request, 'shop/sales.html')
+
+@login_required(login_url='/admin/login/')
+def customers_view(request):
+    return render(request, 'shop/customers.html')
