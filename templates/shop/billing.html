@@ -42,18 +42,23 @@
                 </h3>
                 <button class="text-xs text-primary hover:underline font-medium">Clear</button>
             </div>
-            <div class="space-y-3">
+            <div class="space-y-3 relative">
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <i class="fa-solid fa-phone text-gray-400 text-xs"></i>
                     </div>
-                    <input type="text" id="customerPhone" class="block w-full pl-9 pr-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-primary focus:border-primary" placeholder="Phone Number (Search/New)">
+                    <input type="text" id="customerPhone" autocomplete="off" class="block w-full pl-9 pr-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-primary focus:border-primary" placeholder="Phone Number (Search/New)">
                 </div>
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <i class="fa-solid fa-user text-gray-400 text-xs"></i>
                     </div>
-                    <input type="text" id="customerName" class="block w-full pl-9 pr-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-primary focus:border-primary" placeholder="Customer Name">
+                    <input type="text" id="customerName" autocomplete="off" class="block w-full pl-9 pr-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-primary focus:border-primary" placeholder="Customer Name">
+                </div>
+                
+                <!-- Customer Search Dropdown -->
+                <div id="customerDropdown" class="absolute z-50 w-full bg-white dark:bg-darkcard top-full mt-1 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 hidden max-h-48 overflow-y-auto">
+                    <!-- Results loaded via JS -->
                 </div>
             </div>
         </div>
@@ -87,7 +92,13 @@
                 </div>
 
                 <div class="flex justify-between items-center text-gray-600 dark:text-gray-400">
-                    <span>Tax (GST 18%)</span>
+                    <div class="flex items-center">
+                        <span>Tax (GST 18%)</span>
+                        <label class="relative inline-flex items-center cursor-pointer ml-3">
+                            <input type="checkbox" id="applyGst" class="sr-only peer" checked>
+                            <div class="w-8 h-4 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+                        </label>
+                    </div>
                     <span id="tax" class="font-medium text-gray-800 dark:text-gray-200">₹0.00</span>
                 </div>
                 
@@ -97,10 +108,7 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-3 mt-5">
-                <button onclick="saveDraft()" class="w-full py-3 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white rounded-lg font-bold shadow-sm transition-colors flex items-center justify-center">
-                    <i class="fa-solid fa-bookmark mr-2"></i> Save Draft
-                </button>
+            <div class="mt-5">
                 <button onclick="checkout()" class="w-full py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-bold shadow-md shadow-green-500/30 transition-all flex items-center justify-center transform active:scale-95">
                     <i class="fa-solid fa-check-double mr-2"></i> Checkout
                 </button>
@@ -135,21 +143,72 @@
             renderProducts(e.target.value);
         });
 
-        document.getElementById('discount').addEventListener('input', updateCartSummary);
+        document.getElementById('discount').addEventListener('input', () => {
+            updateCartSummary();
+            saveDraftToLocalStorage();
+        });
+        document.getElementById('applyGst').addEventListener('change', () => {
+            updateCartSummary();
+            saveDraftToLocalStorage();
+        });
 
         // Auto-load draft from localStorage if exists
         loadDraftFromLocalStorage();
 
         // Customer auto-complete logic
         const phoneInput = document.getElementById('customerPhone');
-        phoneInput.addEventListener('input', (e) => {
-            const val = e.target.value;
-            const match = customers.find(c => c.phone && String(c.phone).includes(val));
-            if (match && val.length > 5) {
-                document.getElementById('customerName').value = match.name;
-                phoneInput.dataset.customerId = match.id;
-            } else {
+        const nameInput = document.getElementById('customerName');
+        const dropdown = document.getElementById('customerDropdown');
+
+        function showCustomerDropdown(val) {
+            dropdown.innerHTML = '';
+            if (!val || val.length < 2) {
+                dropdown.classList.add('hidden');
                 phoneInput.dataset.customerId = '';
+                return;
+            }
+            
+            const search = val.toLowerCase();
+            const matches = customers.filter(c => 
+                (c.phone && String(c.phone).toLowerCase().includes(search)) || 
+                (c.name && String(c.name).toLowerCase().includes(search))
+            ).slice(0, 5); // show max 5
+            
+            if (matches.length > 0) {
+                matches.forEach(c => {
+                    const div = document.createElement('div');
+                    div.className = 'px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer border-b border-gray-100 dark:border-gray-700 last:border-0';
+                    div.innerHTML = `<p class="text-sm font-semibold text-gray-900 dark:text-white">${c.name}</p><p class="text-xs text-gray-500">${c.phone}</p>`;
+                    div.addEventListener('click', () => {
+                        phoneInput.value = c.phone;
+                        nameInput.value = c.name;
+                        phoneInput.dataset.customerId = c.id;
+                        dropdown.classList.add('hidden');
+                    });
+                    dropdown.appendChild(div);
+                });
+                dropdown.classList.remove('hidden');
+            } else {
+                dropdown.classList.add('hidden');
+                phoneInput.dataset.customerId = '';
+            }
+        }
+
+        phoneInput.addEventListener('input', (e) => {
+            showCustomerDropdown(e.target.value);
+            // Don't auto clear name to allow typing phone then name, but clear dataset id
+            phoneInput.dataset.customerId = '';
+        });
+
+        nameInput.addEventListener('input', (e) => {
+            showCustomerDropdown(e.target.value);
+            phoneInput.dataset.customerId = ''; // reset id when typing name manually
+        });
+
+        // Hide dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!phoneInput.contains(e.target) && !nameInput.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.add('hidden');
             }
         });
     });
@@ -199,23 +258,28 @@
 
         filtered.forEach(product => {
             const div = document.createElement('div');
-            div.className = "bg-gray-50 dark:bg-gray-800/80 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden cursor-pointer hover:border-primary dark:hover:border-primary hover:shadow-md transition-all group";
+            div.className = "bg-gray-50 dark:bg-gray-800/80 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden cursor-pointer hover:border-primary dark:hover:border-primary hover:shadow-md transition-all group flex flex-col";
             div.onclick = () => addToCart(product);
             
-            // Generate initials or icon since we don't have real images yet
-            const initials = product.brand.substring(0, 1) + product.name.substring(0, 1);
+            let imageContent = '';
+            if (product.image_url) {
+                imageContent = `<img src="${product.image_url}" class="w-full h-full object-cover">`;
+            } else {
+                const initials = product.brand.substring(0, 1) + product.name.substring(0, 1);
+                imageContent = `<span class="text-3xl font-bold text-white/50 dark:text-white/20 tracking-wider">${initials.toUpperCase()}</span>`;
+            }
             
             div.innerHTML = `
-                <div class="h-28 bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-800 flex items-center justify-center relative">
-                    <span class="text-3xl font-bold text-white/50 dark:text-white/20 tracking-wider">${initials.toUpperCase()}</span>
-                    <div class="absolute bottom-2 right-2 bg-black/60 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-md">
+                <div class="h-32 bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-800 flex items-center justify-center relative overflow-hidden">
+                    ${imageContent}
+                    <div class="absolute bottom-2 right-2 bg-black/60 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-md z-10">
                         Stock: ${product.stock_quantity}
                     </div>
                 </div>
-                <div class="p-3">
+                <div class="p-3 flex-1 flex flex-col">
                     <p class="text-xs text-primary font-bold mb-1 uppercase tracking-wide">${product.brand}</p>
-                    <h4 class="font-semibold text-sm text-gray-800 dark:text-gray-200 leading-tight mb-2 truncate" title="${product.name}">${product.name}</h4>
-                    <div class="flex justify-between items-center mt-auto">
+                    <h4 class="font-semibold text-sm text-gray-800 dark:text-gray-200 leading-tight mb-2 line-clamp-2" title="${product.name}">${product.name}</h4>
+                    <div class="flex justify-between items-center mt-auto pt-2">
                         <span class="font-bold text-gray-900 dark:text-white">₹${parseFloat(product.price).toFixed(2)}</span>
                         <div class="w-7 h-7 rounded-full bg-white dark:bg-gray-700 shadow-sm border border-gray-200 dark:border-gray-600 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white group-hover:border-primary transition-colors">
                             <i class="fa-solid fa-plus text-xs"></i>
@@ -233,7 +297,7 @@
             if (existing.quantity < product.stock_quantity) {
                 existing.quantity++;
             } else {
-                alert('Cannot add more than available stock!');
+                showAlert('Limit Exceeded', 'Cannot add more than available stock!', 'warning');
                 return;
             }
         } else {
@@ -324,11 +388,12 @@
         // Prevent discount from being greater than subtotal
         if (discount > subtotal) {
             discount = subtotal;
-            document.getElementById('discount').value = discount.toFixed(2);
+            document.getElementById('discount').value = discount;
         }
 
         const taxableAmount = subtotal - discount;
-        const tax = taxableAmount * taxRate;
+        const applyGst = document.getElementById('applyGst').checked;
+        const tax = applyGst ? taxableAmount * taxRate : 0;
         const total = taxableAmount + tax;
 
         document.getElementById('subtotal').textContent = `₹${subtotal.toFixed(2)}`;
@@ -342,7 +407,8 @@
             cart,
             customerPhone: document.getElementById('customerPhone').value,
             customerName: document.getElementById('customerName').value,
-            discount: document.getElementById('discount').value
+            discount: document.getElementById('discount').value,
+            applyGst: document.getElementById('applyGst').checked
         };
         localStorage.setItem('posDraft', JSON.stringify(draft));
     }
@@ -356,6 +422,9 @@
                 document.getElementById('customerPhone').value = draft.customerPhone || '';
                 document.getElementById('customerName').value = draft.customerName || '';
                 document.getElementById('discount').value = draft.discount || 0;
+                if (draft.applyGst !== undefined) {
+                    document.getElementById('applyGst').checked = draft.applyGst;
+                }
                 renderCart();
             } catch (e) {
                 console.error("Draft corrupted");
@@ -374,7 +443,7 @@
 
         // Create new customer
         if (!name) {
-            alert("Please provide a name for the new customer.");
+            showAlert('Missing Information', 'Please provide a name for the new customer.', 'warning');
             throw new Error("Missing name");
         }
 
@@ -389,14 +458,14 @@
             customers.push(newCustomer);
             return newCustomer.id;
         } else {
-            alert("Failed to create customer");
+            showAlert('Error', 'Failed to create customer', 'error');
             throw new Error("Failed customer creation");
         }
     }
 
     async function submitOrder(status) {
         if (cart.length === 0) {
-            alert("Cart is empty");
+            showAlert('Cart Empty', 'Cart is empty', 'warning');
             return;
         }
 
@@ -405,7 +474,8 @@
             
             const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             const discount = parseFloat(document.getElementById('discount').value) || 0;
-            const tax = (subtotal - discount) * taxRate;
+            const applyGst = document.getElementById('applyGst').checked;
+            const tax = applyGst ? (subtotal - discount) * taxRate : 0;
             const total = subtotal - discount + tax;
 
             const items = cart.map(i => ({
@@ -456,12 +526,12 @@
                     btnCheckout.innerHTML = originalText;
                     btnCheckout.disabled = false;
                     btnCheckout.classList.replace('bg-blue-500', 'bg-green-500');
-                    if(status === 'Completed') alert(`Order Complete! Invoice: ${orderData.invoice_number}`);
-                    else alert('Draft Saved Successfully to Server.');
+                    if(status === 'Completed') showAlert('Success', `Order Complete! Invoice: ${orderData.invoice_number}`, 'success');
+                    else showAlert('Saved', 'Draft Saved Successfully to Server.', 'success');
                 }, 1500);
 
             } else {
-                alert("Failed to submit order.");
+                showAlert('Error', 'Failed to submit order.', 'error');
                 btnCheckout.innerHTML = originalText;
                 btnCheckout.disabled = false;
             }
@@ -471,14 +541,10 @@
         }
     }
 
-    function saveDraft() {
-        submitOrder('Draft');
-    }
-
     function checkout() {
-        if(confirm("Complete this order?")) {
+        showConfirm('Checkout', 'Complete this order?', () => {
             submitOrder('Completed');
-        }
+        });
     }
 </script>
 {% endblock %}

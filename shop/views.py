@@ -1,5 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from .models import Product
+
+def home_view(request):
+    products = Product.objects.all().order_by('-created_at')
+    return render(request, 'shop/home.html', {'products': products})
 
 @login_required(login_url='/admin/login/')
 def dashboard_view(request):
@@ -20,3 +25,6 @@ def sales_view(request):
 @login_required(login_url='/admin/login/')
 def customers_view(request):
     return render(request, 'shop/customers.html')
+
+def login_view(request):
+    return redirect('/admin/login/')

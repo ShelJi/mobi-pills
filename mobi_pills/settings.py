@@ -31,6 +31,7 @@ ALLOWED_HOSTS = ['mobile.plsofttech.com', 'localhost', '127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -129,3 +130,7 @@ MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / "media"
 
 CORS_ALLOW_ALL_ORIGINS = True # Allowing all origins for development
+
+
+LOGIN_REDIRECT_URL = '/dashboard/'
+LOGOUT_REDIRECT_URL = '/'

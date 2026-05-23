@@ -1,6 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from django.utils import timezone
 from django.db.models import Sum
 from datetime import timedelta
@@ -20,6 +21,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     @action(detail=False, methods=['get'])
     def low_stock(self, request):
