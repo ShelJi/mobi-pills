@@ -17,6 +17,7 @@ urlpatterns = [
     path('customers/', views.customers_view, name='customers'),
     path('billing/', views.billing_view, name='billing'),
     path('sales/', views.sales_view, name='sales'),
+    path('categories/', views.categories_view, name='categories'),
     path('api/', include(router.urls)),
     path('login/', views.login_view, name='login'),
 ]

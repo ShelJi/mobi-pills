@@ -26,5 +26,9 @@ def sales_view(request):
 def customers_view(request):
     return render(request, 'shop/customers.html')
 
+@login_required(login_url='/admin/login/')
+def categories_view(request):
+    return render(request, 'shop/categories.html')
+
 def login_view(request):
     return redirect('/admin/login/')

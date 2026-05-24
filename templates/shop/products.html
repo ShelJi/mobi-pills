@@ -5,11 +5,16 @@
 
 {% block content %}
 <div class="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-    <div class="relative w-full sm:w-96">
-        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <i class="fa-solid fa-search text-gray-400"></i>
+    <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto sm:flex-1">
+        <div class="relative w-full sm:w-96">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fa-solid fa-search text-gray-400"></i>
+            </div>
+            <input type="text" id="searchInput" class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg leading-5 bg-white dark:bg-darkcard text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors sm:text-sm" placeholder="Search products, brands, IMEI...">
         </div>
-        <input type="text" id="searchInput" class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg leading-5 bg-white dark:bg-darkcard text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors sm:text-sm" placeholder="Search products, brands, IMEI...">
+        <select id="categoryFilter" class="w-full sm:w-56 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-darkcard text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors sm:text-sm">
+            <option value="all">All Categories</option>
+        </select>
     </div>
     <button onclick="openProductModal()" class="w-full sm:w-auto bg-primary hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg shadow-sm hover:shadow transition-all flex items-center justify-center">
         <i class="fa-solid fa-plus mr-2"></i> Add Product
@@ -112,6 +117,7 @@
 <script>
     let products = [];
     let categories = [];
+    let selectedCategory = 'all';
 
     document.addEventListener('DOMContentLoaded', () => {
         fetchData();
@@ -119,6 +125,11 @@
         
         document.getElementById('searchInput').addEventListener('input', (e) => {
             renderProducts(e.target.value);
+        });
+
+        document.getElementById('categoryFilter').addEventListener('change', (e) => {
+            selectedCategory = e.target.value;
+            renderProducts(document.getElementById('searchInput').value);
         });
 
         document.getElementById('productForm').addEventListener('submit', handleFormSubmit);
@@ -147,11 +158,17 @@
             .then(data => {
                 categories = data;
                 const select = document.getElementById('category');
+                const filterSelect = document.getElementById('categoryFilter');
                 data.forEach(cat => {
                     const option = document.createElement('option');
                     option.value = cat.id;
                     option.textContent = cat.name;
                     select.appendChild(option);
+
+                    const filterOption = document.createElement('option');
+                    filterOption.value = cat.id;
+                    filterOption.textContent = cat.name;
+                    filterSelect.appendChild(filterOption);
                 });
             });
     }
@@ -179,7 +196,9 @@
             const nameMatch = p.name ? String(p.name).toLowerCase().includes(search) : false;
             const brandMatch = p.brand ? String(p.brand).toLowerCase().includes(search) : false;
             const imeiMatch = p.imei ? String(p.imei).toLowerCase().includes(search) : false;
-            return nameMatch || brandMatch || imeiMatch;
+            const matchesSearch = nameMatch || brandMatch || imeiMatch;
+            const matchesCategory = selectedCategory === 'all' || String(p.category) === String(selectedCategory);
+            return matchesSearch && matchesCategory;
         });
 
         if (filtered.length === 0) {

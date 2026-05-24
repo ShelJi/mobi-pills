@@ -5,10 +5,18 @@
 
 {% block content %}
 <div class="mb-6 bg-white dark:bg-darkcard rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-4">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div>
             <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Search</label>
             <input type="text" id="searchSales" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-primary focus:border-primary text-sm" placeholder="Search...">
+        </div>
+        <div>
+            <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Start Date</label>
+            <input type="date" id="startDate" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-primary focus:border-primary text-sm">
+        </div>
+        <div>
+            <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">End Date</label>
+            <input type="date" id="endDate" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-primary focus:border-primary text-sm">
         </div>
         <div>
             <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Staff / User</label>
@@ -16,7 +24,7 @@
                 <option value="">All Users</option>
             </select>
         </div>
-        <div>
+        <div class="md:col-span-4">
             <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Export</label>
             <div class="flex gap-2">
                 <button onclick="exportCSV()" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-3 rounded-lg shadow-sm transition-colors flex items-center justify-center text-sm">
@@ -125,12 +133,24 @@
     let users = [];
 
     document.addEventListener('DOMContentLoaded', () => {
+        setCurrentMonthDates();
         fetchOrders();
         fetchUsers();
         
         document.getElementById('searchSales').addEventListener('input', renderOrders);
         document.getElementById('userFilter').addEventListener('change', renderOrders);
+        document.getElementById('startDate').addEventListener('change', renderOrders);
+        document.getElementById('endDate').addEventListener('change', renderOrders);
     });
+
+    function setCurrentMonthDates() {
+        const now = new Date();
+        const start = new Date(now.getFullYear(), now.getMonth(), 1);
+        const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+        document.getElementById('startDate').value = start.toISOString().split('T')[0];
+        document.getElementById('endDate').value = end.toISOString().split('T')[0];
+    }
 
     function fetchUsers() {
         fetch('/api/users/')
@@ -167,12 +187,17 @@
         
         const search = document.getElementById('searchSales').value.toLowerCase();
         const userId = document.getElementById('userFilter').value;
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
 
         const filtered = orders.filter(o => {
+            const createdAt = new Date(o.created_at);
             const matchSearch = (o.invoice_number && o.invoice_number.toLowerCase().includes(search)) || 
                                 (o.customer_details && o.customer_details.name.toLowerCase().includes(search));
             const matchUser = userId ? o.created_by == userId : true;
-            return matchSearch && matchUser && o.status !== 'Draft';
+            const matchStart = startDate ? createdAt >= new Date(`${startDate}T00:00:00`) : true;
+            const matchEnd = endDate ? createdAt <= new Date(`${endDate}T23:59:59`) : true;
+            return matchSearch && matchUser && matchStart && matchEnd && o.status !== 'Draft';
         });
 
         if (filtered.length === 0) {

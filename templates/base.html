@@ -68,6 +68,10 @@
                 <i class="fa-solid fa-box w-6"></i>
                 <span class="font-medium">Products</span>
             </a>
+            <a href="{% url 'categories' %}" class="flex items-center px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors {% if request.resolver_match.url_name == 'categories' %}bg-blue-50 text-primary dark:bg-blue-900/30{% endif %}">
+                <i class="fa-solid fa-list w-6"></i>
+                <span class="font-medium">Categories</span>
+            </a>
             <a href="{% url 'customers' %}" class="flex items-center px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors {% if request.resolver_match.url_name == 'customers' %}bg-blue-50 text-primary dark:bg-blue-900/30{% endif %}">
                 <i class="fa-solid fa-users w-6"></i>
                 <span class="font-medium">Customers</span>
