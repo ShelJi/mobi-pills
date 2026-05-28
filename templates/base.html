@@ -76,6 +76,10 @@
                 <i class="fa-solid fa-users w-6"></i>
                 <span class="font-medium">Customers</span>
             </a>
+            <a href="{% url 'suppliers' %}" class="flex items-center px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors {% if request.resolver_match.url_name == 'suppliers' %}bg-blue-50 text-primary dark:bg-blue-900/30{% endif %}">
+                <i class="fa-solid fa-truck w-6"></i>
+                <span class="font-medium">Suppliers</span>
+            </a>
             <a href="{% url 'sales' %}" class="flex items-center px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors {% if request.resolver_match.url_name == 'sales' %}bg-blue-50 text-primary dark:bg-blue-900/30{% endif %}">
                 <i class="fa-solid fa-clock-rotate-left w-6"></i>
                 <span class="font-medium">Sales History</span>

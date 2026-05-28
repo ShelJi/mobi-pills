@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Category, Product, Customer, Order, OrderItem
+from .models import Category, Product, Customer, Order, OrderItem, Supplier
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -15,10 +15,14 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class ProductSerializer(serializers.ModelSerializer):
     category_name = serializers.CharField(source='category.name', read_only=True)
+    supplier_name = serializers.CharField(source='supplier.name', read_only=True)
     image_url = serializers.SerializerMethodField()
     image = serializers.ImageField(required=False, allow_null=True, use_url=True)
     category = serializers.PrimaryKeyRelatedField(
         queryset=Category.objects.all(), required=False, allow_null=True
+    )
+    supplier = serializers.PrimaryKeyRelatedField(
+        queryset=Supplier.objects.all(), required=False, allow_null=True
     )
 
     class Meta:
@@ -36,6 +40,11 @@ class ProductSerializer(serializers.ModelSerializer):
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
+        fields = '__all__'
+
+class SupplierSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Supplier
         fields = '__all__'
 
 class OrderItemSerializer(serializers.ModelSerializer):

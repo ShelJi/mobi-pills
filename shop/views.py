@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Product
 
 def home_view(request):
-    products = Product.objects.all().order_by('-created_at')
+    products = Product.objects.filter(is_visible=True).order_by('-created_at')
     return render(request, 'shop/home.html', {'products': products})
 
 @login_required(login_url='/admin/login/')
@@ -29,6 +29,10 @@ def customers_view(request):
 @login_required(login_url='/admin/login/')
 def categories_view(request):
     return render(request, 'shop/categories.html')
+
+@login_required(login_url='/admin/login/')
+def suppliers_view(request):
+    return render(request, 'shop/suppliers.html')
 
 def login_view(request):
     return redirect('/admin/login/')

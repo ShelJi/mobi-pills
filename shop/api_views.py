@@ -6,8 +6,8 @@ from django.utils import timezone
 from django.db.models import Sum
 from datetime import timedelta
 from django.contrib.auth.models import User
-from .models import Category, Product, Customer, Order
-from .serializers import CategorySerializer, ProductSerializer, CustomerSerializer, OrderSerializer, UserSerializer
+from .models import Category, Product, Customer, Order, Supplier
+from .serializers import CategorySerializer, ProductSerializer, CustomerSerializer, OrderSerializer, UserSerializer, SupplierSerializer
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
@@ -33,6 +33,10 @@ class ProductViewSet(viewsets.ModelViewSet):
 class CustomerViewSet(viewsets.ModelViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
+
+class SupplierViewSet(viewsets.ModelViewSet):
+    queryset = Supplier.objects.all()
+    serializer_class = SupplierSerializer
 
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all().order_by('-created_at')

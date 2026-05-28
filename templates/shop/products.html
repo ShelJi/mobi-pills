@@ -66,10 +66,20 @@
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Product Name</label>
                         <input type="text" id="name" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
                     </div>
+
+                    <div class="col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description (Optional)</label>
+                        <textarea id="description" rows="2" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+                    </div>
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Brand</label>
                         <input type="text" id="brand" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Model (Optional)</label>
+                        <input type="text" id="model" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
                     </div>
                     
                     <div>
@@ -81,7 +91,20 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Price (₹)</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Supplier</label>
+                        <select id="supplier" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
+                            <option value="">Select Supplier</option>
+                            <!-- Suppliers loaded via JS -->
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Buy Price (₹) (Optional)</label>
+                        <input type="number" id="buy_price" step="0.01" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Sell Price (₹)</label>
                         <input type="number" id="price" step="0.01" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
                     </div>
                     
@@ -90,14 +113,21 @@
                         <input type="number" id="stock" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
                     </div>
 
-                    <div class="col-span-2 md:col-span-1">
+                    <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">IMEI/SKU (Optional)</label>
                         <input type="text" id="imei" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
                     </div>
                     
-                    <div class="col-span-2 md:col-span-1">
+                    <div class="col-span-2">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Product Image</label>
                         <input type="file" id="image" accept="image/*" class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-primary file:text-white hover:file:bg-blue-600 transition-colors text-sm">
+                    </div>
+
+                    <div class="col-span-2">
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" id="is_visible" checked class="w-4 h-4 text-primary bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-600 rounded focus:ring-primary focus:ring-2">
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Visible in shop</span>
+                        </label>
                     </div>
                 </div>
 
@@ -117,11 +147,13 @@
 <script>
     let products = [];
     let categories = [];
+    let suppliers = [];
     let selectedCategory = 'all';
 
     document.addEventListener('DOMContentLoaded', () => {
         fetchData();
         fetchCategories();
+        fetchSuppliers();
         
         document.getElementById('searchInput').addEventListener('input', (e) => {
             renderProducts(e.target.value);
@@ -169,6 +201,23 @@
                     filterOption.value = cat.id;
                     filterOption.textContent = cat.name;
                     filterSelect.appendChild(filterOption);
+                });
+            });
+    }
+
+    function fetchSuppliers() {
+        fetch('/api/suppliers/')
+            .then(res => res.json())
+            .then(data => {
+                suppliers = data;
+                const select = document.getElementById('supplier');
+                // Clear existing options except the first placeholder
+                select.innerHTML = '<option value="">Select Supplier</option>';
+                data.forEach(sup => {
+                    const option = document.createElement('option');
+                    option.value = sup.id;
+                    option.textContent = sup.company_name ? `${sup.name} - (${sup.company_name})` : sup.name;
+                    select.appendChild(option);
                 });
             });
     }
@@ -251,11 +300,16 @@
             document.getElementById('modalTitle').textContent = 'Edit Product';
             document.getElementById('productId').value = product.id;
             document.getElementById('name').value = product.name;
+            document.getElementById('description').value = product.description || '';
             document.getElementById('brand').value = product.brand;
+            document.getElementById('model').value = product.model || '';
             document.getElementById('category').value = product.category || '';
+            document.getElementById('supplier').value = product.supplier || '';
+            document.getElementById('buy_price').value = product.buy_price || '';
             document.getElementById('price').value = product.price;
             document.getElementById('stock').value = product.stock_quantity;
             document.getElementById('imei').value = product.imei || '';
+            document.getElementById('is_visible').checked = product.is_visible;
         } else {
             document.getElementById('modalTitle').textContent = 'Add New Product';
         }
@@ -303,12 +357,26 @@
         formData.append('brand', document.getElementById('brand').value);
         formData.append('price', document.getElementById('price').value);
         formData.append('stock_quantity', document.getElementById('stock').value);
+
+        const description = document.getElementById('description').value;
+        if (description) formData.append('description', description);
+
+        const model = document.getElementById('model').value;
+        if (model) formData.append('model', model);
+
+        const buyPrice = document.getElementById('buy_price').value;
+        if (buyPrice) formData.append('buy_price', buyPrice);
         
         const imei = document.getElementById('imei').value;
         if (imei) formData.append('imei', imei);
         
         const catId = document.getElementById('category').value;
         if (catId) formData.append('category', catId);
+
+        const supplierId = document.getElementById('supplier').value;
+        if (supplierId) formData.append('supplier', supplierId);
+
+        formData.append('is_visible', document.getElementById('is_visible').checked);
         
         const imageFile = document.getElementById('image').files[0];
         if (imageFile) {
