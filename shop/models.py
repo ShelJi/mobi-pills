@@ -2,6 +2,12 @@ from django.db import models
 from django.contrib.auth.models import User
 import uuid
 
+from PIL import Image, ImageOps
+from django.core.files.base import ContentFile
+from io import BytesIO
+import os
+
+
 class Category(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
@@ -40,6 +46,52 @@ class Product(models.Model):
     is_visible = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+
+        if self.image:
+
+            img = Image.open(self.image)
+
+            # Auto rotate using EXIF
+            img = ImageOps.exif_transpose(img)
+
+            # Preserve transparency
+            if img.mode not in ("RGB", "RGBA"):
+                img = img.convert("RGB")
+
+            # Resize image
+            max_size = (800, 800)
+            img.thumbnail(
+                max_size,
+                Image.Resampling.LANCZOS
+            )
+
+            # Convert to WEBP
+            img_io = BytesIO()
+
+            img.save(
+                img_io,
+                format="WEBP",
+                quality=75,
+                optimize=True,
+                method=6,
+            )
+
+            img_io.seek(0)
+
+            # Rename file
+            file_name = os.path.splitext(
+                self.image.name
+            )[0] + ".webp"
+
+            # Replace image
+            self.image = ContentFile(
+                img_io.getvalue(),
+                name=file_name
+            )
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.brand} {self.name}"
