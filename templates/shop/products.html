@@ -1,280 +1,280 @@
-{% extends 'base.html' %}
-
-{% block title %}Products - Mobile Shop{% endblock %}
-{% block header %}Product Management{% endblock %}
-
-{% block content %}
-<div class="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+{% extends 'base.html' %} {% block title %}
+  Products - Mobile Shop
+{% endblock %} {% block header %}
+  Product Management
+{% endblock %} {% block content %}
+  <div class="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
     <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto sm:flex-1">
-        <div class="relative w-full sm:w-96">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <i class="fa-solid fa-search text-gray-400"></i>
-            </div>
-            <input type="text" id="searchInput" class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg leading-5 bg-white dark:bg-darkcard text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors sm:text-sm" placeholder="Search products, brands, IMEI...">
+      <div class="relative w-full sm:w-96">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <i class="fa-solid fa-search text-gray-400"></i>
         </div>
-        <select id="categoryFilter" class="w-full sm:w-56 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-darkcard text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors sm:text-sm">
-            <option value="all">All Categories</option>
-        </select>
+        <input type="text" id="searchInput" class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg leading-5 bg-white dark:bg-darkcard text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors sm:text-sm" placeholder="Search products, brands, IMEI..." />
+      </div>
+      <select id="categoryFilter" class="w-full sm:w-56 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-darkcard text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors sm:text-sm">
+        <option value="all">All Categories</option>
+      </select>
     </div>
-    <button onclick="openProductModal()" class="w-full sm:w-auto bg-primary hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg shadow-sm hover:shadow transition-all flex items-center justify-center">
-        <i class="fa-solid fa-plus mr-2"></i> Add Product
-    </button>
-</div>
+    <button onclick="openProductModal()" class="w-full sm:w-auto bg-primary hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg shadow-sm hover:shadow transition-all flex items-center justify-center"><i class="fa-solid fa-plus mr-2"></i> Add Product</button>
+  </div>
 
-<div class="mb-[15vh] md:mb-[0vh] bg-white dark:bg-darkcard rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+  <div class="mb-[15vh] md:mb-[0vh] bg-white dark:bg-darkcard rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
     <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse">
-            <thead>
-                <tr class="bg-gray-50 dark:bg-gray-800/50 text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider border-b border-gray-100 dark:border-gray-700">
-                    <th class="py-4 px-6 font-medium">Product</th>
-                    <th class="py-4 px-6 font-medium">Brand</th>
-                    <th class="py-4 px-6 font-medium">Category</th>
-                    <th class="py-4 px-6 font-medium">Price</th>
-                    <th class="py-4 px-6 font-medium">Stock</th>
-                    <th class="py-4 px-6 font-medium text-right">Actions</th>
-                </tr>
-            </thead>
-            <tbody id="productsBody" class="divide-y divide-gray-100 dark:divide-gray-700 text-sm">
-                <!-- Products loaded via JS -->
-            </tbody>
-        </table>
-        <div id="loadingIndicator" class="p-10 text-center text-gray-400 dark:text-gray-500">
-            <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3 text-primary"></i>
-            <p class="text-sm">Loading products...</p>
-        </div>
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-gray-50 dark:bg-gray-800/50 text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider border-b border-gray-100 dark:border-gray-700">
+            <th class="py-4 px-6 font-medium">Product</th>
+            <th class="py-4 px-6 font-medium">Brand</th>
+            <th class="py-4 px-6 font-medium">Category</th>
+            <th class="py-4 px-6 font-medium">Price</th>
+            <th class="py-4 px-6 font-medium">Stock</th>
+            <th class="py-4 px-6 font-medium text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="productsBody" class="divide-y divide-gray-100 dark:divide-gray-700 text-sm">
+          <!-- Products loaded via JS -->
+        </tbody>
+      </table>
+      <div id="loadingIndicator" class="p-10 text-center text-gray-400 dark:text-gray-500">
+        <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3 text-primary"></i>
+        <p class="text-sm">Loading products...</p>
+      </div>
     </div>
-</div>
+  </div>
 
-<!-- Product Modal -->
-<div id="productModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+  <!-- Product Modal -->
+  <div id="productModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
     <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
-        <div class="fixed inset-0 transition-opacity bg-gray-900/75 backdrop-blur-sm" onclick="closeProductModal()"></div>
+      <div class="fixed inset-0 transition-opacity bg-gray-900/75 backdrop-blur-sm" onclick="closeProductModal()"></div>
 
-        <div class="relative inline-block w-full max-w-lg p-6 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-darkcard shadow-xl rounded-2xl border border-gray-100 dark:border-gray-700">
-            <div class="flex justify-between items-center mb-5 border-b border-gray-100 dark:border-gray-700 pb-3">
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white" id="modalTitle">Add New Product</h3>
-                <button onclick="closeProductModal()" class="text-gray-400 hover:text-gray-500 focus:outline-none">
-                    <i class="fa-solid fa-xmark text-xl"></i>
-                </button>
-            </div>
-            
-            <form id="productForm" class="space-y-4">
-                <input type="hidden" id="productId">
-                
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Product Name</label>
-                        <input type="text" id="name" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
-                    </div>
-
-                    <div class="col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description (Optional)</label>
-                        <textarea id="description" rows="2" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Brand</label>
-                        <input type="text" id="brand" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Model (Optional)</label>
-                        <input type="text" id="model" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Category</label>
-                        <select id="category" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
-                            <option value="">Select Category</option>
-                            <!-- Categories loaded via JS -->
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Supplier</label>
-                        <select id="supplier" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
-                            <option value="">Select Supplier</option>
-                            <!-- Suppliers loaded via JS -->
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Buy Price (₹) (Optional)</label>
-                        <input type="number" id="buy_price" step="0.01" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Sell Price (₹)</label>
-                        <input type="number" id="price" step="0.01" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Stock Quantity</label>
-                        <input type="number" id="stock" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">IMEI/SKU (Optional)</label>
-                        <input type="text" id="imei" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
-                    </div>
-                    
-                    <div class="col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Product Image</label>
-                        <input type="file" id="image" accept="image/*" class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-primary file:text-white hover:file:bg-blue-600 transition-colors text-sm">
-                    </div>
-
-                    <div class="col-span-2">
-                        <label class="flex items-center gap-3 cursor-pointer">
-                            <input type="checkbox" id="is_visible" checked class="w-4 h-4 text-primary bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-600 rounded focus:ring-primary focus:ring-2">
-                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Visible in shop</span>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="mt-6 flex justify-end space-x-3 pt-4 border-t border-gray-100 dark:border-gray-700">
-                    <button type="button" onclick="closeProductModal()" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors font-medium">Cancel</button>
-                    <button type="submit" class="px-4 py-2 bg-primary hover:bg-blue-600 text-white rounded-lg shadow-sm transition-colors font-medium flex items-center">
-                        <i class="fa-solid fa-save mr-2"></i> Save Product
-                    </button>
-                </div>
-            </form>
+      <div class="relative inline-block w-full max-w-lg p-6 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-darkcard shadow-xl rounded-2xl border border-gray-100 dark:border-gray-700">
+        <div class="flex justify-between items-center mb-5 border-b border-gray-100 dark:border-gray-700 pb-3">
+          <h3 class="text-xl font-bold text-gray-900 dark:text-white" id="modalTitle">Add New Product</h3>
+          <button onclick="closeProductModal()" class="text-gray-400 hover:text-gray-500 focus:outline-none"><i class="fa-solid fa-xmark text-xl"></i></button>
         </div>
+
+        <form id="productForm" class="space-y-4">
+          <input type="hidden" id="productId" />
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="col-span-2">
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Product Name</label>
+              <input type="text" id="name" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary" />
+            </div>
+
+            <div class="col-span-2">
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description (Optional)</label>
+              <textarea id="description" rows="2" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Brand</label>
+              <input type="text" id="brand" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary" />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Model (Optional)</label>
+              <input type="text" id="model" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary" />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Category</label>
+              <select id="category" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
+                <option value="">Select Category</option>
+                <!-- Categories loaded via JS -->
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Supplier</label>
+              <select id="supplier" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
+                <option value="">Select Supplier</option>
+                <!-- Suppliers loaded via JS -->
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Buy Price (₹) (Optional)</label>
+              <input type="number" id="buy_price" step="0.01" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary" />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Sell Price (₹)</label>
+              <input type="number" id="price" step="0.01" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary" />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Stock Quantity</label>
+              <input type="number" id="stock" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary" />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">IMEI/SKU (Optional)</label>
+              <input type="text" id="imei" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary" />
+            </div>
+
+            <div class="col-span-2">
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Product Image</label>
+              <input type="file" id="image" accept="image/*" class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-primary file:text-white hover:file:bg-blue-600 transition-colors text-sm" />
+            </div>
+
+            <div class="col-span-2">
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input type="checkbox" id="is_visible" checked class="w-4 h-4 text-primary bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-600 rounded focus:ring-primary focus:ring-2" />
+                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Visible in shop</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="mt-6 flex justify-end space-x-3 pt-4 border-t border-gray-100 dark:border-gray-700">
+            <button type="button" onclick="closeProductModal()" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors font-medium">Cancel</button>
+            <button type="submit" class="px-4 py-2 bg-primary hover:bg-blue-600 text-white rounded-lg shadow-sm transition-colors font-medium flex items-center"><i class="fa-solid fa-save mr-2"></i> Save Product</button>
+          </div>
+        </form>
+      </div>
     </div>
-</div>
-{% endblock %}
-
-{% block scripts %}
+  </div>
+{% endblock %} {% block scripts %}
 <script>
-    let products = [];
-    let categories = [];
-    let suppliers = [];
-    let selectedCategory = 'all';
+	let products = [];
+	let categories = [];
+	let suppliers = [];
+	let selectedCategory = "all";
 
-    document.addEventListener('DOMContentLoaded', () => {
-        fetchData();
-        fetchCategories();
-        fetchSuppliers();
-        
-        document.getElementById('searchInput').addEventListener('input', (e) => {
-            renderProducts(e.target.value);
-        });
+	document.addEventListener("DOMContentLoaded", () => {
+		fetchData();
+		fetchCategories();
+		fetchSuppliers();
 
-        document.getElementById('categoryFilter').addEventListener('change', (e) => {
-            selectedCategory = e.target.value;
-            renderProducts(document.getElementById('searchInput').value);
-        });
+		document.getElementById("searchInput").addEventListener("input", (e) => {
+			renderProducts(e.target.value);
+		});
 
-        document.getElementById('productForm').addEventListener('submit', handleFormSubmit);
-    });
+		document.getElementById("categoryFilter").addEventListener("change", (e) => {
+			selectedCategory = e.target.value;
+			renderProducts(document.getElementById("searchInput").value);
+		});
 
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
+		document.getElementById("productForm").addEventListener("submit", handleFormSubmit);
+	});
 
-    const csrftoken = getCookie('csrftoken');
+	function getCookie(name) {
+		let cookieValue = null;
+		if (document.cookie && document.cookie !== "") {
+			const cookies = document.cookie.split(";");
+			for (let i = 0; i < cookies.length; i++) {
+				const cookie = cookies[i].trim();
+				if (cookie.substring(0, name.length + 1) === name + "=") {
+					cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+					break;
+				}
+			}
+		}
+		return cookieValue;
+	}
 
-    function fetchCategories() {
-        fetch('/api/categories/')
-            .then(res => res.json())
-            .then(data => {
-                categories = data;
-                const select = document.getElementById('category');
-                const filterSelect = document.getElementById('categoryFilter');
-                data.forEach(cat => {
-                    const option = document.createElement('option');
-                    option.value = cat.id;
-                    option.textContent = cat.name;
-                    select.appendChild(option);
+	const csrftoken = getCookie("csrftoken");
 
-                    const filterOption = document.createElement('option');
-                    filterOption.value = cat.id;
-                    filterOption.textContent = cat.name;
-                    filterSelect.appendChild(filterOption);
-                });
-            });
-    }
+	function fetchCategories() {
+		fetch("/api/categories/")
+			.then((res) => res.json())
+			.then((data) => {
+				categories = data;
+				const select = document.getElementById("category");
+				const filterSelect = document.getElementById("categoryFilter");
+				data.forEach((cat) => {
+					const option = document.createElement("option");
+					option.value = cat.id;
+					option.textContent = cat.name;
+					select.appendChild(option);
 
-    function fetchSuppliers() {
-        fetch('/api/suppliers/')
-            .then(res => res.json())
-            .then(data => {
-                suppliers = data;
-                const select = document.getElementById('supplier');
-                // Clear existing options except the first placeholder
-                select.innerHTML = '<option value="">Select Supplier</option>';
-                data.forEach(sup => {
-                    const option = document.createElement('option');
-                    option.value = sup.id;
-                    option.textContent = sup.company_name ? `${sup.name} - (${sup.company_name})` : sup.name;
-                    select.appendChild(option);
-                });
-            });
-    }
+					const filterOption = document.createElement("option");
+					filterOption.value = cat.id;
+					filterOption.textContent = cat.name;
+					filterSelect.appendChild(filterOption);
+				});
+			});
+	}
 
-    function fetchData() {
-        document.getElementById('loadingIndicator').style.display = 'block';
-        fetch('/api/products/')
-            .then(res => res.json())
-            .then(data => {
-                products = data;
-                renderProducts();
-                document.getElementById('loadingIndicator').style.display = 'none';
-            })
-            .catch(err => {
-                document.getElementById('loadingIndicator').innerHTML = `<p class="text-red-500">Failed to load products</p>`;
-            });
-    }
+	function fetchSuppliers() {
+		fetch("/api/suppliers/")
+			.then((res) => res.json())
+			.then((data) => {
+				suppliers = data;
+				const select = document.getElementById("supplier");
+				// Clear existing options except the first placeholder
+				select.innerHTML = '<option value="">Select Supplier</option>';
+				data.forEach((sup) => {
+					const option = document.createElement("option");
+					option.value = sup.id;
+					option.textContent = sup.company_name
+						? `${sup.name} - (${sup.company_name})`
+						: sup.name;
+					select.appendChild(option);
+				});
+			});
+	}
 
-    function renderProducts(filterText = '') {
-        const tbody = document.getElementById('productsBody');
-        tbody.innerHTML = '';
-        
-        const filtered = products.filter(p => {
-            const search = filterText.toLowerCase();
-            const nameMatch = p.name ? String(p.name).toLowerCase().includes(search) : false;
-            const brandMatch = p.brand ? String(p.brand).toLowerCase().includes(search) : false;
-            const imeiMatch = p.imei ? String(p.imei).toLowerCase().includes(search) : false;
-            const matchesSearch = nameMatch || brandMatch || imeiMatch;
-            const matchesCategory = selectedCategory === 'all' || String(p.category) === String(selectedCategory);
-            return matchesSearch && matchesCategory;
-        });
+	function fetchData() {
+		document.getElementById("loadingIndicator").style.display = "block";
+		fetch("/api/products/")
+			.then((res) => res.json())
+			.then((data) => {
+				products = data;
+				renderProducts();
+				document.getElementById("loadingIndicator").style.display = "none";
+			})
+			.catch((err) => {
+				document.getElementById("loadingIndicator").innerHTML =
+					`<p class="text-red-500">Failed to load products</p>`;
+			});
+	}
 
-        if (filtered.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-gray-500">No products found</td></tr>`;
-            return;
-        }
+	function renderProducts(filterText = "") {
+		const tbody = document.getElementById("productsBody");
+		tbody.innerHTML = "";
 
-        filtered.forEach(product => {
-            const stockColor = product.stock_quantity <= 5 ? 'text-red-500 font-bold bg-red-50 dark:bg-red-900/20 px-2 py-1 rounded-md' : 'text-green-600 font-medium bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-md';
-            const imgHtml = product.image_url ? `<img src="${product.image_url}" class="w-10 h-10 object-cover rounded-lg mr-3 shadow-sm border border-gray-200 dark:border-gray-700">` : `<div class="w-10 h-10 rounded-lg mr-3 shadow-sm border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-400"><i class="fa-solid fa-box"></i></div>`;
-            
-            const tr = document.createElement('tr');
-            tr.className = "hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors";
-            tr.innerHTML = `
+		const filtered = products.filter((p) => {
+			const search = filterText.toLowerCase();
+			const nameMatch = p.name ? String(p.name).toLowerCase().includes(search) : false;
+			const brandMatch = p.brand ? String(p.brand).toLowerCase().includes(search) : false;
+			const imeiMatch = p.imei ? String(p.imei).toLowerCase().includes(search) : false;
+			const matchesSearch = nameMatch || brandMatch || imeiMatch;
+			const matchesCategory =
+				selectedCategory === "all" || String(p.category) === String(selectedCategory);
+			return matchesSearch && matchesCategory;
+		});
+
+		if (filtered.length === 0) {
+			tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-gray-500">No products found</td></tr>`;
+			return;
+		}
+
+		filtered.forEach((product) => {
+			const stockColor =
+				product.stock_quantity <= 5
+					? "text-red-500 font-bold bg-red-50 dark:bg-red-900/20 px-2 py-1 rounded-md"
+					: "text-green-600 font-medium bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-md";
+			const imgHtml = product.image_url
+				? `<img src="${product.image_url}" class="w-10 h-10 object-cover rounded-lg mr-3 shadow-sm border border-gray-200 dark:border-gray-700">`
+				: `<div class="w-10 h-10 rounded-lg mr-3 shadow-sm border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-400"><i class="fa-solid fa-box"></i></div>`;
+
+			const tr = document.createElement("tr");
+			tr.className = "hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors";
+			tr.innerHTML = `
                 <td class="py-4 px-6">
                     <div class="flex items-center">
                         ${imgHtml}
                         <div>
                             <p class="font-bold text-gray-900 dark:text-white">${product.name}</p>
-                            <p class="text-xs text-gray-500">${product.imei || 'No IMEI/SKU'}</p>
+                            <p class="text-xs text-gray-500">${product.imei || "No IMEI/SKU"}</p>
                         </div>
                     </div>
                 </td>
                 <td class="py-4 px-6 text-gray-700 dark:text-gray-300">${product.brand}</td>
                 <td class="py-4 px-6 text-gray-700 dark:text-gray-300">
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-600">
-                        ${product.category_name || 'Uncategorized'}
+                        ${product.category_name || "Uncategorized"}
                     </span>
                 </td>
                 <td class="py-4 px-6 font-semibold">₹${parseFloat(product.price).toFixed(2)}</td>
@@ -288,124 +288,122 @@
                     </button>
                 </td>
             `;
-            tbody.appendChild(tr);
-        });
-    }
+			tbody.appendChild(tr);
+		});
+	}
 
-    function openProductModal(product = null) {
-        document.getElementById('productForm').reset();
-        document.getElementById('productId').value = '';
-        
-        if (product) {
-            document.getElementById('modalTitle').textContent = 'Edit Product';
-            document.getElementById('productId').value = product.id;
-            document.getElementById('name').value = product.name;
-            document.getElementById('description').value = product.description || '';
-            document.getElementById('brand').value = product.brand;
-            document.getElementById('model').value = product.model || '';
-            document.getElementById('category').value = product.category || '';
-            document.getElementById('supplier').value = product.supplier || '';
-            document.getElementById('buy_price').value = product.buy_price || '';
-            document.getElementById('price').value = product.price;
-            document.getElementById('stock').value = product.stock_quantity;
-            document.getElementById('imei').value = product.imei || '';
-            document.getElementById('is_visible').checked = product.is_visible;
-        } else {
-            document.getElementById('modalTitle').textContent = 'Add New Product';
-        }
-        
-        document.getElementById('productModal').classList.remove('hidden');
-    }
+	function openProductModal(product = null) {
+		document.getElementById("productForm").reset();
+		document.getElementById("productId").value = "";
 
-    function closeProductModal() {
-        document.getElementById('productModal').classList.add('hidden');
-    }
+		if (product) {
+			document.getElementById("modalTitle").textContent = "Edit Product";
+			document.getElementById("productId").value = product.id;
+			document.getElementById("name").value = product.name;
+			document.getElementById("description").value = product.description || "";
+			document.getElementById("brand").value = product.brand;
+			document.getElementById("model").value = product.model || "";
+			document.getElementById("category").value = product.category || "";
+			document.getElementById("supplier").value = product.supplier || "";
+			document.getElementById("buy_price").value = product.buy_price || "";
+			document.getElementById("price").value = product.price;
+			document.getElementById("stock").value = product.stock_quantity;
+			document.getElementById("imei").value = product.imei || "";
+			document.getElementById("is_visible").checked = product.is_visible;
+		} else {
+			document.getElementById("modalTitle").textContent = "Add New Product";
+		}
 
-    function editProduct(id) {
-        const product = products.find(p => p.id === id);
-        if (product) {
-            openProductModal(product);
-        }
-    }
+		document.getElementById("productModal").classList.remove("hidden");
+	}
 
-    function deleteProduct(id) {
-        showConfirm('Delete Product', 'Are you sure you want to delete this product?', () => {
-            fetch(`/api/products/${id}/`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRFToken': csrftoken
-                }
-            })
-            .then(res => {
-                if (res.ok) {
-                    fetchData();
-                    showAlert('Deleted', 'Product has been deleted.', 'success');
-                } else {
-                    showAlert('Error', 'Error deleting product', 'error');
-                }
-            });
-        });
-    }
+	function closeProductModal() {
+		document.getElementById("productModal").classList.add("hidden");
+	}
 
-    function handleFormSubmit(e) {
-        e.preventDefault();
-        
-        const id = document.getElementById('productId').value;
-        const formData = new FormData();
-        
-        formData.append('name', document.getElementById('name').value);
-        formData.append('brand', document.getElementById('brand').value);
-        formData.append('price', document.getElementById('price').value);
-        formData.append('stock_quantity', document.getElementById('stock').value);
+	function editProduct(id) {
+		const product = products.find((p) => p.id === id);
+		if (product) {
+			openProductModal(product);
+		}
+	}
 
-        const description = document.getElementById('description').value;
-        if (description) formData.append('description', description);
+	function deleteProduct(id) {
+		showConfirm("Delete Product", "Are you sure you want to delete this product?", () => {
+			fetch(`/api/products/${id}/`, {
+				method: "DELETE",
+				headers: {
+					"X-CSRFToken": csrftoken,
+				},
+			}).then((res) => {
+				if (res.ok) {
+					fetchData();
+					showAlert("Deleted", "Product has been deleted.", "success");
+				} else {
+					showAlert("Error", "Error deleting product", "error");
+				}
+			});
+		});
+	}
 
-        const model = document.getElementById('model').value;
-        if (model) formData.append('model', model);
+	function handleFormSubmit(e) {
+		e.preventDefault();
 
-        const buyPrice = document.getElementById('buy_price').value;
-        if (buyPrice) formData.append('buy_price', buyPrice);
-        
-        const imei = document.getElementById('imei').value;
-        if (imei) formData.append('imei', imei);
-        
-        const catId = document.getElementById('category').value;
-        if (catId) formData.append('category', catId);
+		const id = document.getElementById("productId").value;
+		const formData = new FormData();
 
-        const supplierId = document.getElementById('supplier').value;
-        if (supplierId) formData.append('supplier', supplierId);
+		formData.append("name", document.getElementById("name").value);
+		formData.append("brand", document.getElementById("brand").value);
+		formData.append("price", document.getElementById("price").value);
+		formData.append("stock_quantity", document.getElementById("stock").value);
 
-        formData.append('is_visible', document.getElementById('is_visible').checked);
-        
-        const imageFile = document.getElementById('image').files[0];
-        if (imageFile) {
-            formData.append('image', imageFile);
-        }
+		const description = document.getElementById("description").value;
+		if (description) formData.append("description", description);
 
-        const method = id ? 'PATCH' : 'POST';
-        const url = id ? `/api/products/${id}/` : '/api/products/';
+		const model = document.getElementById("model").value;
+		if (model) formData.append("model", model);
 
-        fetch(url, {
-            method: method,
-            headers: {
-                // Do not set Content-Type for FormData
-                'X-CSRFToken': csrftoken
-            },
-            body: formData
-        })
-        .then(async res => {
-            if (res.ok) {
-                closeProductModal();
-                fetchData();
-                showAlert('Saved', 'Product saved successfully.', 'success');
-            } else {
-                const err = await res.json().catch(() => ({}));
-                console.error('Save product error:', err);
-                const msg = Object.values(err).flat().join(' ') || 'Error saving product';
-                showAlert('Error', msg, 'error');
-            }
-        });
-    }
+		const buyPrice = document.getElementById("buy_price").value;
+		if (buyPrice) formData.append("buy_price", buyPrice);
+
+		const imei = document.getElementById("imei").value;
+		if (imei) formData.append("imei", imei);
+
+		const catId = document.getElementById("category").value;
+		if (catId) formData.append("category", catId);
+
+		const supplierId = document.getElementById("supplier").value;
+		if (supplierId) formData.append("supplier", supplierId);
+
+		formData.append("is_visible", document.getElementById("is_visible").checked);
+
+		const imageFile = document.getElementById("image").files[0];
+		if (imageFile) {
+			formData.append("image", imageFile);
+		}
+
+		const method = id ? "PATCH" : "POST";
+		const url = id ? `/api/products/${id}/` : "/api/products/";
+
+		fetch(url, {
+			method: method,
+			headers: {
+				// Do not set Content-Type for FormData
+				"X-CSRFToken": csrftoken,
+			},
+			body: formData,
+		}).then(async (res) => {
+			if (res.ok) {
+				closeProductModal();
+				fetchData();
+				showAlert("Saved", "Product saved successfully.", "success");
+			} else {
+				const err = await res.json().catch(() => ({}));
+				console.error("Save product error:", err);
+				const msg = Object.values(err).flat().join(" ") || "Error saving product";
+				showAlert("Error", msg, "error");
+			}
+		});
+	}
 </script>
 {% endblock %}

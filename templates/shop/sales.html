@@ -1,223 +1,240 @@
-{% extends 'base.html' %}
-
-{% block title %}Sales History - Mobile Shop{% endblock %}
-{% block header %}Sales History & Reports{% endblock %}
-
-{% block content %}
-<div class="mb-6 bg-white dark:bg-darkcard rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-4">
+{% extends 'base.html' %} {% block title %}
+  Sales History - Mobile Shop
+{% endblock %} {% block header %}
+  Sales History & Reports
+{% endblock %} {% block content %}
+  <div class="mb-6 bg-white dark:bg-darkcard rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-4">
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div>
-            <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Search</label>
-            <input type="text" id="searchSales" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-primary focus:border-primary text-sm" placeholder="Search...">
+      <div>
+        <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Search</label>
+        <input type="text" id="searchSales" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-primary focus:border-primary text-sm" placeholder="Search..." />
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Start Date</label>
+        <input type="date" id="startDate" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-primary focus:border-primary text-sm" />
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">End Date</label>
+        <input type="date" id="endDate" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-primary focus:border-primary text-sm" />
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Staff / User</label>
+        <select id="userFilter" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-primary focus:border-primary text-sm">
+          <option value="">All Users</option>
+        </select>
+      </div>
+      <div class="md:col-span-4">
+        <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Export</label>
+        <div class="flex gap-2">
+          <button onclick="exportCSV()" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-3 rounded-lg shadow-sm transition-colors flex items-center justify-center text-sm"><i class="fa-solid fa-file-csv mr-2"></i> CSV</button>
+          <button onclick="exportPDF()" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-3 rounded-lg shadow-sm transition-colors flex items-center justify-center text-sm"><i class="fa-solid fa-file-pdf mr-2"></i> PDF</button>
         </div>
-        <div>
-            <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Start Date</label>
-            <input type="date" id="startDate" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-primary focus:border-primary text-sm">
-        </div>
-        <div>
-            <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">End Date</label>
-            <input type="date" id="endDate" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-primary focus:border-primary text-sm">
-        </div>
-        <div>
-            <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Staff / User</label>
-            <select id="userFilter" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-primary focus:border-primary text-sm">
-                <option value="">All Users</option>
-            </select>
-        </div>
-        <div class="md:col-span-4">
-            <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Export</label>
-            <div class="flex gap-2">
-                <button onclick="exportCSV()" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-3 rounded-lg shadow-sm transition-colors flex items-center justify-center text-sm">
-                    <i class="fa-solid fa-file-csv mr-2"></i> CSV
-                </button>
-                <button onclick="exportPDF()" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-3 rounded-lg shadow-sm transition-colors flex items-center justify-center text-sm">
-                    <i class="fa-solid fa-file-pdf mr-2"></i> PDF
-                </button>
-            </div>
-        </div>
+      </div>
     </div>
-</div>
+  </div>
 
-<div class="mb-[15vh] md:mb-[0vh] bg-white dark:bg-darkcard rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+  <div class="mb-[15vh] md:mb-[0vh] bg-white dark:bg-darkcard rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
     <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse">
-            <thead>
-                <tr class="bg-gray-50 dark:bg-gray-800/50 text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider border-b border-gray-100 dark:border-gray-700">
-                    <th class="py-4 px-6 font-medium">Invoice #</th>
-                    <th class="py-4 px-6 font-medium">Date</th>
-                    <th class="py-4 px-6 font-medium">Customer</th>
-                    <th class="py-4 px-6 font-medium">Staff</th>
-                    <th class="py-4 px-6 font-medium text-right">Subtotal</th>
-                    <th class="py-4 px-6 font-medium text-right">Tax + Disc</th>
-                    <th class="py-4 px-6 font-medium text-right">Total</th>
-                    <th class="py-4 px-6 font-medium text-center">Action</th>
-                </tr>
-            </thead>
-            <tbody id="salesBody" class="divide-y divide-gray-100 dark:divide-gray-700 text-sm">
-                <!-- Sales loaded via JS -->
-            </tbody>
-        </table>
-        <div id="loadingIndicator" class="p-10 text-center text-gray-400 dark:text-gray-500">
-            <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3 text-primary"></i>
-            <p class="text-sm">Loading transactions...</p>
-        </div>
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-gray-50 dark:bg-gray-800/50 text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider border-b border-gray-100 dark:border-gray-700">
+            <th class="py-4 px-6 font-medium">Invoice #</th>
+            <th class="py-4 px-6 font-medium">Date</th>
+            <th class="py-4 px-6 font-medium">Customer</th>
+            <th class="py-4 px-6 font-medium">Staff</th>
+            <th class="py-4 px-6 font-medium text-right">Subtotal</th>
+            <th class="py-4 px-6 font-medium text-right">Tax + Disc</th>
+            <th class="py-4 px-6 font-medium text-right">Total</th>
+            <th class="py-4 px-6 font-medium text-center">Action</th>
+          </tr>
+        </thead>
+        <tbody id="salesBody" class="divide-y divide-gray-100 dark:divide-gray-700 text-sm">
+          <!-- Sales loaded via JS -->
+        </tbody>
+      </table>
+      <div id="loadingIndicator" class="p-10 text-center text-gray-400 dark:text-gray-500">
+        <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3 text-primary"></i>
+        <p class="text-sm">Loading transactions...</p>
+      </div>
     </div>
-</div>
+  </div>
 
-<!-- Order Detail Modal -->
-<div id="orderModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+  <!-- Order Detail Modal -->
+  <div id="orderModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
     <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
-        <div class="fixed inset-0 transition-opacity bg-gray-900/75 backdrop-blur-sm" onclick="closeOrderModal()"></div>
+      <div class="fixed inset-0 transition-opacity bg-gray-900/75 backdrop-blur-sm" onclick="closeOrderModal()"></div>
 
-        <div id="modalContent" class="relative inline-block w-full max-w-2xl p-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-darkcard shadow-xl rounded-2xl border border-gray-100 dark:border-gray-700">
-            <!-- Modal Actions Header (Hidden on print) -->
-            <div class="flex justify-between items-center mb-6 print:hidden border-b border-gray-100 dark:border-gray-700 pb-3">
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white flex items-center">
-                    <i class="fa-solid fa-receipt text-primary mr-2"></i> Invoice <span id="modalInvoiceNum" class="ml-2 text-primary"></span>
-                </h3>
-                <button onclick="closeOrderModal()" class="text-gray-400 hover:text-gray-500 focus:outline-none">
-                    <i class="fa-solid fa-xmark text-xl"></i>
-                </button>
-            </div>
-
-            <!-- Print Header (Visible on print & in modal) -->
-            <div class="text-center mb-8 border-b border-gray-200 dark:border-gray-700 pb-6">
-                <h1 class="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight uppercase">JP Mobiles</h1>
-                <p class="text-sm font-bold text-primary tracking-widest uppercase mb-2">Sales and Service</p>
-                <p class="text-sm text-gray-600 dark:text-gray-400">123 Tech Street, Digital Avenue, City - 400001</p>
-                <p class="text-sm text-gray-600 dark:text-gray-400">Phone: +91 98765 43210 | Email: contact@jpmobiles.com</p>
-                <p class="text-sm text-gray-600 dark:text-gray-400 font-medium mt-1">GSTIN: 27AAAAA0000A1Z5</p>
-            </div>
-            
-            <div id="modalOrderDetails">
-                <!-- Loaded dynamically -->
-            </div>
-
-            <div class="mt-6 flex justify-end space-x-3 pt-4 border-t border-gray-100 dark:border-gray-700 print:hidden">
-                <button onclick="closeOrderModal()" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors font-medium">Close</button>
-                <button onclick="window.print()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-sm transition-colors font-medium flex items-center">
-                    <i class="fa-solid fa-print mr-2"></i> Print Invoice
-                </button>
-            </div>
+      <div id="modalContent" class="relative inline-block w-full max-w-2xl p-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-darkcard shadow-xl rounded-2xl border border-gray-100 dark:border-gray-700">
+        <!-- Modal Actions Header (Hidden on print) -->
+        <div class="flex justify-between items-center mb-6 print:hidden border-b border-gray-100 dark:border-gray-700 pb-3">
+          <h3 class="text-xl font-bold text-gray-900 dark:text-white flex items-center">
+            <i class="fa-solid fa-receipt text-primary mr-2"></i> Invoice
+            <span id="modalInvoiceNum" class="ml-2 text-primary"></span>
+          </h3>
+          <button onclick="closeOrderModal()" class="text-gray-400 hover:text-gray-500 focus:outline-none"><i class="fa-solid fa-xmark text-xl"></i></button>
         </div>
+
+        <!-- Print Header (Visible on print & in modal) -->
+        <div class="text-center mb-8 border-b border-gray-200 dark:border-gray-700 pb-6">
+          <h1 class="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight uppercase">JP Mobiles</h1>
+          <p class="text-sm font-bold text-primary tracking-widest uppercase mb-2">Sales and Service</p>
+          <p class="text-sm text-gray-600 dark:text-gray-400">123 Tech Street, Digital Avenue, City - 400001</p>
+          <p class="text-sm text-gray-600 dark:text-gray-400">Phone: +91 98765 43210 | Email: contact@jpmobiles.com</p>
+          <p class="text-sm text-gray-600 dark:text-gray-400 font-medium mt-1">GSTIN: 27AAAAA0000A1Z5</p>
+        </div>
+
+        <div id="modalOrderDetails">
+          <!-- Loaded dynamically -->
+        </div>
+
+        <div class="mt-6 flex justify-end space-x-3 pt-4 border-t border-gray-100 dark:border-gray-700 print:hidden">
+          <button onclick="closeOrderModal()" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors font-medium">Close</button>
+          <button onclick="window.print()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-sm transition-colors font-medium flex items-center"><i class="fa-solid fa-print mr-2"></i> Print Invoice</button>
+        </div>
+      </div>
     </div>
-</div>
+  </div>
 
-<style>
+  <style>
     @media print {
-        body * { visibility: hidden; }
-        #orderModal, #orderModal * { visibility: visible; }
-        #orderModal { position: absolute; left: 0; top: 0; width: 100%; height: 100%; border: none; box-shadow: none; background: white; padding: 0; margin: 0; }
-        .fixed.inset-0.bg-gray-900\\/75 { display: none; }
-        .print\\:hidden { display: none !important; }
-        
-        /* Force colors and backgrounds for printing */
-        * {
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-        }
-        /* Overrides for dark mode printing */
-        #modalContent, #modalContent * {
-            color: #000 !important;
-            border-color: #e5e7eb !important;
-        }
-        .text-primary { color: #2563eb !important; }
-        .bg-gray-50 { background-color: #f9fafb !important; }
+      body * {
+        visibility: hidden;
+      }
+      #orderModal,
+      #orderModal * {
+        visibility: visible;
+      }
+      #orderModal {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+        box-shadow: none;
+        background: white;
+        padding: 0;
+        margin: 0;
+      }
+      .fixed.inset-0.bg-gray-900\\/75 {
+        display: none;
+      }
+      .print\\:hidden {
+        display: none !important;
+      }
+    
+      /* Force colors and backgrounds for printing */
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      /* Overrides for dark mode printing */
+      #modalContent,
+      #modalContent * {
+        color: #000 !important;
+        border-color: #e5e7eb !important;
+      }
+      .text-primary {
+        color: #2563eb !important;
+      }
+      .bg-gray-50 {
+        background-color: #f9fafb !important;
+      }
     }
-</style>
-{% endblock %}
-
-{% block scripts %}
+  </style>
+{% endblock %} {% block scripts %}
 <script>
-    let orders = [];
-    let users = [];
+	let orders = [];
+	let users = [];
 
-    document.addEventListener('DOMContentLoaded', () => {
-        setCurrentMonthDates();
-        fetchOrders();
-        fetchUsers();
-        
-        document.getElementById('searchSales').addEventListener('input', renderOrders);
-        document.getElementById('userFilter').addEventListener('change', renderOrders);
-        document.getElementById('startDate').addEventListener('change', renderOrders);
-        document.getElementById('endDate').addEventListener('change', renderOrders);
-    });
+	document.addEventListener("DOMContentLoaded", () => {
+		setCurrentMonthDates();
+		fetchOrders();
+		fetchUsers();
 
-    function setCurrentMonthDates() {
-        const now = new Date();
-        const start = new Date(now.getFullYear(), now.getMonth(), 1);
-        const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+		document.getElementById("searchSales").addEventListener("input", renderOrders);
+		document.getElementById("userFilter").addEventListener("change", renderOrders);
+		document.getElementById("startDate").addEventListener("change", renderOrders);
+		document.getElementById("endDate").addEventListener("change", renderOrders);
+	});
 
-        document.getElementById('startDate').value = start.toISOString().split('T')[0];
-        document.getElementById('endDate').value = end.toISOString().split('T')[0];
-    }
+	function setCurrentMonthDates() {
+		const now = new Date();
+		const start = new Date(now.getFullYear(), now.getMonth(), 1);
+		const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
-    function fetchUsers() {
-        fetch('/api/users/')
-            .then(res => res.json())
-            .then(data => {
-                users = data;
-                const select = document.getElementById('userFilter');
-                data.forEach(user => {
-                    const option = document.createElement('option');
-                    option.value = user.id;
-                    option.textContent = user.username;
-                    select.appendChild(option);
-                });
-            });
-    }
+		document.getElementById("startDate").value = start.toISOString().split("T")[0];
+		document.getElementById("endDate").value = end.toISOString().split("T")[0];
+	}
 
-    function fetchOrders() {
-        document.getElementById('loadingIndicator').style.display = 'block';
-        fetch('/api/orders/')
-            .then(res => res.json())
-            .then(data => {
-                orders = data;
-                renderOrders();
-                document.getElementById('loadingIndicator').style.display = 'none';
-            })
-            .catch(err => {
-                document.getElementById('loadingIndicator').innerHTML = `<p class="text-red-500">Failed to load orders</p>`;
-            });
-    }
+	function fetchUsers() {
+		fetch("/api/users/")
+			.then((res) => res.json())
+			.then((data) => {
+				users = data;
+				const select = document.getElementById("userFilter");
+				data.forEach((user) => {
+					const option = document.createElement("option");
+					option.value = user.id;
+					option.textContent = user.username;
+					select.appendChild(option);
+				});
+			});
+	}
 
-    function renderOrders() {
-        const tbody = document.getElementById('salesBody');
-        tbody.innerHTML = '';
-        
-        const search = document.getElementById('searchSales').value.toLowerCase();
-        const userId = document.getElementById('userFilter').value;
-        const startDate = document.getElementById('startDate').value;
-        const endDate = document.getElementById('endDate').value;
+	function fetchOrders() {
+		document.getElementById("loadingIndicator").style.display = "block";
+		fetch("/api/orders/")
+			.then((res) => res.json())
+			.then((data) => {
+				orders = data;
+				renderOrders();
+				document.getElementById("loadingIndicator").style.display = "none";
+			})
+			.catch((err) => {
+				document.getElementById("loadingIndicator").innerHTML =
+					`<p class="text-red-500">Failed to load orders</p>`;
+			});
+	}
 
-        const filtered = orders.filter(o => {
-            const createdAt = new Date(o.created_at);
-            const matchSearch = (o.invoice_number && o.invoice_number.toLowerCase().includes(search)) || 
-                                (o.customer_details && o.customer_details.name.toLowerCase().includes(search));
-            const matchUser = userId ? o.created_by == userId : true;
-            const matchStart = startDate ? createdAt >= new Date(`${startDate}T00:00:00`) : true;
-            const matchEnd = endDate ? createdAt <= new Date(`${endDate}T23:59:59`) : true;
-            return matchSearch && matchUser && matchStart && matchEnd && o.status !== 'Draft';
-        });
+	function renderOrders() {
+		const tbody = document.getElementById("salesBody");
+		tbody.innerHTML = "";
 
-        if (filtered.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="8" class="py-8 text-center text-gray-500">No transactions found</td></tr>`;
-            return;
-        }
+		const search = document.getElementById("searchSales").value.toLowerCase();
+		const userId = document.getElementById("userFilter").value;
+		const startDate = document.getElementById("startDate").value;
+		const endDate = document.getElementById("endDate").value;
 
-        filtered.forEach(order => {
-            const date = new Date(order.created_at).toLocaleString();
+		const filtered = orders.filter((o) => {
+			const createdAt = new Date(o.created_at);
+			const matchSearch =
+				(o.invoice_number && o.invoice_number.toLowerCase().includes(search)) ||
+				(o.customer_details && o.customer_details.name.toLowerCase().includes(search));
+			const matchUser = userId ? o.created_by == userId : true;
+			const matchStart = startDate ? createdAt >= new Date(`${startDate}T00:00:00`) : true;
+			const matchEnd = endDate ? createdAt <= new Date(`${endDate}T23:59:59`) : true;
+			return matchSearch && matchUser && matchStart && matchEnd && o.status !== "Draft";
+		});
 
-            const tr = document.createElement('tr');
-            tr.className = "hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors";
-            tr.innerHTML = `
-                <td class="py-4 px-6 font-medium text-primary">${order.invoice_number || 'N/A'}</td>
+		if (filtered.length === 0) {
+			tbody.innerHTML = `<tr><td colspan="8" class="py-8 text-center text-gray-500">No transactions found</td></tr>`;
+			return;
+		}
+
+		filtered.forEach((order) => {
+			const date = new Date(order.created_at).toLocaleString();
+
+			const tr = document.createElement("tr");
+			tr.className = "hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors";
+			tr.innerHTML = `
+                <td class="py-4 px-6 font-medium text-primary">${order.invoice_number || "N/A"}</td>
                 <td class="py-4 px-6 text-gray-600 dark:text-gray-400 text-xs">${date}</td>
                 <td class="py-4 px-6 font-medium text-gray-800 dark:text-gray-200">
                     ${order.customer_details ? order.customer_details.name : '<span class="text-gray-400 italic">Walk-in</span>'}
-                    ${order.customer_details ? `<br><span class="text-xs text-gray-500 font-normal">${order.customer_details.phone}</span>` : ''}
+                    ${order.customer_details ? `<br><span class="text-xs text-gray-500 font-normal">${order.customer_details.phone}</span>` : ""}
                 </td>
-                <td class="py-4 px-6 text-gray-600 dark:text-gray-400 text-xs">${order.created_by_name || 'System'}</td>
+                <td class="py-4 px-6 text-gray-600 dark:text-gray-400 text-xs">${order.created_by_name || "System"}</td>
                 <td class="py-4 px-6 text-right">₹${parseFloat(order.subtotal).toFixed(2)}</td>
                 <td class="py-4 px-6 text-right text-xs text-gray-500">
                     +₹${parseFloat(order.tax_amount).toFixed(2)}<br>
@@ -230,39 +247,47 @@
                     </button>
                 </td>
             `;
-            tbody.appendChild(tr);
-        });
-    }
+			tbody.appendChild(tr);
+		});
+	}
 
-    function viewOrder(id) {
-        const order = orders.find(o => o.id === id);
-        if (!order) return;
+	function viewOrder(id) {
+		const order = orders.find((o) => o.id === id);
+		if (!order) return;
 
-        document.getElementById('modalInvoiceNum').textContent = order.invoice_number || `(Draft ID: ${order.id})`;
-        
-        const details = document.getElementById('modalOrderDetails');
-        
-        let itemsHtml = order.items && order.items.length > 0 ? order.items.map(item => `
+		document.getElementById("modalInvoiceNum").textContent =
+			order.invoice_number || `(Draft ID: ${order.id})`;
+
+		const details = document.getElementById("modalOrderDetails");
+
+		let itemsHtml =
+			order.items && order.items.length > 0
+				? order.items
+						.map(
+							(item) => `
             <tr class="border-b border-gray-100 dark:border-gray-700/50">
                 <td class="py-2 text-sm">${item.product_name}</td>
                 <td class="py-2 text-center text-sm">${item.quantity}</td>
                 <td class="py-2 text-right text-sm">₹${parseFloat(item.price_at_time).toFixed(2)}</td>
                 <td class="py-2 text-right font-medium text-sm">₹${parseFloat(item.total_price).toFixed(2)}</td>
             </tr>
-        `).join('') : `<tr><td colspan="4" class="py-4 text-center text-sm text-gray-500">No items found</td></tr>`;
+        `,
+						)
+						.join("")
+				: `<tr><td colspan="4" class="py-4 text-center text-sm text-gray-500">No items found</td></tr>`;
 
-        details.innerHTML = `
+		details.innerHTML = `
             <div class="flex justify-between mb-6">
                 <div>
                     <p class="text-xs text-gray-500 uppercase tracking-wider font-bold mb-1">Billed To</p>
-                    <p class="font-bold text-gray-800 dark:text-gray-200">${order.customer_details ? order.customer_details.name : 'Walk-in Customer'}</p>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">${order.customer_details ? order.customer_details.phone : ''}</p>
+                    <p class="font-bold text-gray-800 dark:text-gray-200">${order.customer_details ? order.customer_details.name : "Walk-in Customer"}</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">${order.customer_details ? order.customer_details.phone : ""}</p>
                 </div>
                 <div class="text-right">
                     <p class="text-xs text-gray-500 uppercase tracking-wider font-bold mb-1">Invoice Info</p>
-                    <p class="font-bold text-gray-800 dark:text-gray-200">${order.invoice_number || 'DRAFT'}</p>
+                    <p class="font-bold text-gray-800 dark:text-gray-200">${order.invoice_number || "DRAFT"}</p>
                     <p class="text-sm text-gray-600 dark:text-gray-400">${new Date(order.created_at).toLocaleString()}</p>
-                    <p class="text-sm font-bold mt-1 ${order.status === 'Completed' ? 'text-green-500' : 'text-yellow-500'}">${order.status.toUpperCase()}</p>
+                    <p class="text-sm font-bold mt-1 ${order.status === "Completed" ? "text-green-500" : "text-yellow-500"}">${order.status.toUpperCase()}</p>
                 </div>
             </div>
 
@@ -304,82 +329,85 @@
             </div>
         `;
 
-        document.getElementById('orderModal').classList.remove('hidden');
-    }
+		document.getElementById("orderModal").classList.remove("hidden");
+	}
 
-    function closeOrderModal() {
-        document.getElementById('orderModal').classList.add('hidden');
-    }
+	function closeOrderModal() {
+		document.getElementById("orderModal").classList.add("hidden");
+	}
 
-    function exportCSV() {
-        let csvContent = "data:text/csv;charset=utf-8,";
-        csvContent += "Invoice,Date,Customer,Phone,Status,Subtotal,Discount,Tax,Total\n";
-        
-        orders.forEach(o => {
-            const date = new Date(o.created_at).toLocaleString().replace(/,/g, '');
-            const customer = o.customer_details ? o.customer_details.name : 'Walk-in';
-            const phone = o.customer_details ? o.customer_details.phone : '';
-            const row = `${o.invoice_number || 'DRAFT'},${date},"${customer}","${phone}",${o.status},${o.subtotal},${o.discount},${o.tax_amount},${o.final_amount}`;
-            csvContent += row + "\n";
-        });
-        
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `mobi_pills_sales_${new Date().toISOString().split('T')[0]}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
+	function exportCSV() {
+		let csvContent = "data:text/csv;charset=utf-8,";
+		csvContent += "Invoice,Date,Customer,Phone,Status,Subtotal,Discount,Tax,Total\n";
 
-    function exportPDF() {
-        const table = document.querySelector('table').cloneNode(true);
-        const theadTr = table.querySelector('thead tr');
-        if (theadTr && theadTr.children.length > 0) theadTr.removeChild(theadTr.lastElementChild);
-        
-        table.querySelectorAll('tbody tr').forEach(tr => {
-            if (tr.children.length > 0) tr.removeChild(tr.lastElementChild);
-        });
+		orders.forEach((o) => {
+			const date = new Date(o.created_at).toLocaleString().replace(/,/g, "");
+			const customer = o.customer_details ? o.customer_details.name : "Walk-in";
+			const phone = o.customer_details ? o.customer_details.phone : "";
+			const row = `${o.invoice_number || "DRAFT"},${date},"${customer}","${phone}",${o.status},${o.subtotal},${o.discount},${o.tax_amount},${o.final_amount}`;
+			csvContent += row + "\n";
+		});
 
-        const container = document.createElement('div');
-        container.innerHTML = `<h2 style="font-size: 20px; font-weight: bold; margin-bottom: 20px; color: black; font-family: sans-serif;">Sales Report - ${new Date().toLocaleDateString()}</h2>`;
-        container.appendChild(table);
-        
-        table.style.width = '100%';
-        table.style.borderCollapse = 'collapse';
-        table.style.fontFamily = 'sans-serif';
-        table.style.fontSize = '12px';
-        table.querySelectorAll('th, td').forEach(cell => {
-            cell.style.border = '1px solid #ddd';
-            cell.style.padding = '8px';
-            cell.style.color = 'black';
-        });
+		const encodedUri = encodeURI(csvContent);
+		const link = document.createElement("a");
+		link.setAttribute("href", encodedUri);
+		link.setAttribute(
+			"download",
+			`mobi_pills_sales_${new Date().toISOString().split("T")[0]}.csv`,
+		);
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+	}
 
-        const opt = {
-            margin:       10,
-            filename:     `mobi_pills_sales_report_${new Date().toISOString().split('T')[0]}.pdf`,
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2 },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
-        };
+	function exportPDF() {
+		const table = document.querySelector("table").cloneNode(true);
+		const theadTr = table.querySelector("thead tr");
+		if (theadTr && theadTr.children.length > 0) theadTr.removeChild(theadTr.lastElementChild);
 
-        html2pdf().set(opt).from(container).save();
-    }
+		table.querySelectorAll("tbody tr").forEach((tr) => {
+			if (tr.children.length > 0) tr.removeChild(tr.lastElementChild);
+		});
 
-    // Force light theme for printing
-    let wasDarkBeforePrint = false;
-    window.addEventListener('beforeprint', () => {
-        wasDarkBeforePrint = document.documentElement.classList.contains('dark');
-        if (wasDarkBeforePrint) {
-            document.documentElement.classList.remove('dark');
-        }
-    });
-    
-    window.addEventListener('afterprint', () => {
-        if (wasDarkBeforePrint) {
-            document.documentElement.classList.add('dark');
-        }
-    });
+		const container = document.createElement("div");
+		container.innerHTML = `<h2 style="font-size: 20px; font-weight: bold; margin-bottom: 20px; color: black; font-family: sans-serif;">Sales Report - ${new Date().toLocaleDateString()}</h2>`;
+		container.appendChild(table);
+
+		table.style.width = "100%";
+		table.style.borderCollapse = "collapse";
+		table.style.fontFamily = "sans-serif";
+		table.style.fontSize = "12px";
+		table.querySelectorAll("th, td").forEach((cell) => {
+			cell.style.border = "1px solid #ddd";
+			cell.style.padding = "8px";
+			cell.style.color = "black";
+		});
+
+		const opt = {
+			margin: 10,
+			filename: `mobi_pills_sales_report_${new Date().toISOString().split("T")[0]}.pdf`,
+			image: { type: "jpeg", quality: 0.98 },
+			html2canvas: { scale: 2 },
+			jsPDF: { unit: "mm", format: "a4", orientation: "landscape" },
+		};
+
+		html2pdf().set(opt).from(container).save();
+	}
+
+	// Force light theme for printing
+	let wasDarkBeforePrint = false;
+	window.addEventListener("beforeprint", () => {
+		wasDarkBeforePrint = document.documentElement.classList.contains("dark");
+		if (wasDarkBeforePrint) {
+			document.documentElement.classList.remove("dark");
+		}
+	});
+
+	window.addEventListener("afterprint", () => {
+		if (wasDarkBeforePrint) {
+			document.documentElement.classList.add("dark");
+		}
+	});
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 {% endblock %}

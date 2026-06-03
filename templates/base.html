@@ -1,323 +1,344 @@
 <!DOCTYPE html>
 <html lang="en" class="light">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}JP Mobiles Sales and Service{% endblock %}</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      {% block title %}
+        JP Mobiles Sales and Service
+      {% endblock %}
+    </title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!--  <style>
+  body { font-family: 'Inter', sans-serif; }
+</style>  -->
     <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#3b82f6',
-                        darkbg: '#111827',
-                        darkcard: '#1f2937'
-                    }
-                }
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              primary: '#3b82f6',
+              darkbg: '#111827',
+              darkcard: '#1f2937'
             }
+          }
         }
+      }
     </script>
     <style>
-        /* Transitions for smooth dark mode */
-        body { transition: background-color 0.3s, color 0.3s; }
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .dark .glass-panel {
-            background: rgba(31, 41, 55, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        
-        /* Hide scrollbar for clean look */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+      /* Transitions for smooth dark mode */
+      body {
+        transition: background-color 0.3s, color 0.3s;
+      }
+      
+      .glass-panel {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+      
+      .dark .glass-panel {
+        background: rgba(31, 41, 55, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      
+      /* Hide scrollbar for clean look */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 3px;
+      }
+      
+      .dark ::-webkit-scrollbar-thumb {
+        background: #475569;
+      }
     </style>
-</head>
-<body class="bg-gray-50 text-gray-800 dark:bg-darkbg dark:text-gray-200 antialiased h-screen flex overflow-hidden">
+  </head>
 
+  <body class="bg-gray-50 text-gray-800 dark:bg-darkbg dark:text-gray-200 antialiased h-screen flex overflow-hidden">
     <!-- Mobile Sidebar Overlay -->
     <div id="sidebarOverlay" class="fixed inset-0 bg-gray-900/50 z-40 hidden lg:hidden backdrop-blur-sm transition-opacity opacity-0"></div>
 
     <!-- Sidebar -->
     <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-white dark:bg-darkcard border-r border-gray-200 dark:border-gray-700 flex flex-col transition-transform transform -translate-x-full lg:translate-x-0 lg:static z-50">
-        <div class="h-16 flex items-center px-6 border-b border-gray-200 dark:border-gray-700">
-            <i class="fa-solid fa-mobile-screen-button text-primary text-2xl mr-3 shrink-0"></i>
-            <span class="font-bold text-base leading-tight tracking-tight text-gray-800 dark:text-gray-100">JP Mobiles<br><span class="text-xs text-primary font-medium">Sales and Service</span></span>
+      <div class="h-16 flex items-center px-6 border-b border-gray-200 dark:border-gray-700">
+        <i class="fa-solid fa-mobile-screen-button text-primary text-2xl mr-3 shrink-0"></i>
+        <span class="font-bold text-base leading-tight tracking-tight text-gray-800 dark:text-gray-100">JP Mobiles<br /><span class="text-xs text-primary font-medium">Sales and Service</span></span>
+      </div>
+      <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+        <a href="{% url 'home' %}" class="flex items-center px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors {% if request.resolver_match.url_name == 'home' %}bg-blue-50 text-primary dark:bg-blue-900/30{% endif %}">
+          <i class="fa-solid fa-house w-6"></i>
+          <span class="font-medium">Home</span>
+        </a>
+        <a href="{% url 'dashboard' %}" class="flex items-center px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors {% if request.resolver_match.url_name == 'dashboard' %}bg-blue-50 text-primary dark:bg-blue-900/30{% endif %}">
+          <i class="fa-solid fa-chart-pie w-6"></i>
+          <span class="font-medium">Dashboard</span>
+        </a>
+        <a href="{% url 'billing' %}" class="flex items-center px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors {% if request.resolver_match.url_name == 'billing' %}bg-blue-50 text-primary dark:bg-blue-900/30{% endif %}">
+          <i class="fa-solid fa-file-invoice-dollar w-6"></i>
+          <span class="font-medium">Billing (POS)</span>
+        </a>
+        <a href="{% url 'products' %}" class="flex items-center px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors {% if request.resolver_match.url_name == 'products' %}bg-blue-50 text-primary dark:bg-blue-900/30{% endif %}">
+          <i class="fa-solid fa-box w-6"></i>
+          <span class="font-medium">Products</span>
+        </a>
+        <a href="{% url 'categories' %}" class="flex items-center px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors {% if request.resolver_match.url_name == 'categories' %}bg-blue-50 text-primary dark:bg-blue-900/30{% endif %}">
+          <i class="fa-solid fa-list w-6"></i>
+          <span class="font-medium">Categories</span>
+        </a>
+        <a href="{% url 'customers' %}" class="flex items-center px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors {% if request.resolver_match.url_name == 'customers' %}bg-blue-50 text-primary dark:bg-blue-900/30{% endif %}">
+          <i class="fa-solid fa-users w-6"></i>
+          <span class="font-medium">Customers</span>
+        </a>
+        <a href="{% url 'suppliers' %}" class="flex items-center px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors {% if request.resolver_match.url_name == 'suppliers' %}bg-blue-50 text-primary dark:bg-blue-900/30{% endif %}">
+          <i class="fa-solid fa-truck w-6"></i>
+          <span class="font-medium">Suppliers</span>
+        </a>
+        <a href="{% url 'sales' %}" class="flex items-center px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors {% if request.resolver_match.url_name == 'sales' %}bg-blue-50 text-primary dark:bg-blue-900/30{% endif %}">
+          <i class="fa-solid fa-clock-rotate-left w-6"></i>
+          <span class="font-medium">Sales History</span>
+        </a>
+      </nav>
+      <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+        <div class="flex items-center mb-4 px-2">
+          <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold mr-3">{{ request.user.username|make_list|first|upper }}</div>
+          <div>
+            <p class="text-sm font-semibold">{{ request.user.username }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400">
+              {% if request.user.is_superuser %}
+                Admin
+              {% else %}
+                Staff
+              {% endif %}
+            </p>
+          </div>
         </div>
-        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
-            <a href="{% url 'home' %}" class="flex items-center px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors {% if request.resolver_match.url_name == 'home' %}bg-blue-50 text-primary dark:bg-blue-900/30{% endif %}">
-                <i class="fa-solid fa-house w-6"></i>
-                <span class="font-medium">Home</span>
-            </a>
-            <a href="{% url 'dashboard' %}" class="flex items-center px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors {% if request.resolver_match.url_name == 'dashboard' %}bg-blue-50 text-primary dark:bg-blue-900/30{% endif %}">
-                <i class="fa-solid fa-chart-pie w-6"></i>
-                <span class="font-medium">Dashboard</span>
-            </a>
-            <a href="{% url 'billing' %}" class="flex items-center px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors {% if request.resolver_match.url_name == 'billing' %}bg-blue-50 text-primary dark:bg-blue-900/30{% endif %}">
-                <i class="fa-solid fa-file-invoice-dollar w-6"></i>
-                <span class="font-medium">Billing (POS)</span>
-            </a>
-            <a href="{% url 'products' %}" class="flex items-center px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors {% if request.resolver_match.url_name == 'products' %}bg-blue-50 text-primary dark:bg-blue-900/30{% endif %}">
-                <i class="fa-solid fa-box w-6"></i>
-                <span class="font-medium">Products</span>
-            </a>
-            <a href="{% url 'categories' %}" class="flex items-center px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors {% if request.resolver_match.url_name == 'categories' %}bg-blue-50 text-primary dark:bg-blue-900/30{% endif %}">
-                <i class="fa-solid fa-list w-6"></i>
-                <span class="font-medium">Categories</span>
-            </a>
-            <a href="{% url 'customers' %}" class="flex items-center px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors {% if request.resolver_match.url_name == 'customers' %}bg-blue-50 text-primary dark:bg-blue-900/30{% endif %}">
-                <i class="fa-solid fa-users w-6"></i>
-                <span class="font-medium">Customers</span>
-            </a>
-            <a href="{% url 'suppliers' %}" class="flex items-center px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors {% if request.resolver_match.url_name == 'suppliers' %}bg-blue-50 text-primary dark:bg-blue-900/30{% endif %}">
-                <i class="fa-solid fa-truck w-6"></i>
-                <span class="font-medium">Suppliers</span>
-            </a>
-            <a href="{% url 'sales' %}" class="flex items-center px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors {% if request.resolver_match.url_name == 'sales' %}bg-blue-50 text-primary dark:bg-blue-900/30{% endif %}">
-                <i class="fa-solid fa-clock-rotate-left w-6"></i>
-                <span class="font-medium">Sales History</span>
-            </a>
-        </nav>
-        <div class="p-4 border-t border-gray-200 dark:border-gray-700">
-            <div class="flex items-center mb-4 px-2">
-                <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold mr-3">
-                    {{ request.user.username|make_list|first|upper }}
-                </div>
-                <div>
-                    <p class="text-sm font-semibold">{{ request.user.username }}</p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">
-                        {% if request.user.is_superuser %}Admin{% else %}Staff{% endif %}
-                    </p>
-                </div>
-            </div>
-            <form action="{% url 'admin:logout' %}" method="post">
-                {% csrf_token %}
-                <button type="submit" class="w-full flex items-center justify-center py-2 px-4 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors">
-                    <i class="fa-solid fa-arrow-right-from-bracket mr-2"></i> Logout
-                </button>
-            </form>
-        </div>
+        <form action="{% url 'admin:logout' %}" method="post">
+          {% csrf_token %}
+          <button type="submit" class="w-full flex items-center justify-center py-2 px-4 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"><i class="fa-solid fa-arrow-right-from-bracket mr-2"></i> Logout</button>
+        </form>
+      </div>
     </aside>
 
-<!-- Main Content -->
+    <!-- Main Content -->
     <div class="flex-1 flex flex-col h-full overflow-hidden relative">
-        <!-- Header -->
-        <header class="h-16 glass-panel border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4 sm:px-6 z-30 sticky top-0">
-            <div class="flex items-center overflow-hidden">
-                <button id="mobileMenuBtn" class="lg:hidden p-2 mr-3 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors flex-shrink-0">
-                    <i class="fa-solid fa-bars text-xl"></i>
-                </button>
-                <h2 class="text-lg sm:text-xl font-semibold truncate">{% block header %}Dashboard{% endblock %}</h2>
-            </div>
-            <div class="flex items-center space-x-4">
-                <!-- Low Stock Indicator -->
-                {% if low_stock_count > 0 %}
-                <div class="relative group z-[99999]">
-                    <button class="relative p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-orange-600 dark:text-orange-400">
-                        <i class="fa-solid fa-exclamation-triangle text-xl"></i>
-                        <span class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-orange-600 rounded-full">
-                            {{ low_stock_count }}
-                        </span>
-                    </button>
-                    
-                    <!-- Low Stock Dropdown -->
-                    <div class="absolute right-0 pt-2 w-80 hidden group-hover:block z-[99999] pointer-events-auto">
-                        <div class="bg-white dark:bg-darkcard rounded-lg shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-                            <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-                                <p class="text-sm font-semibold text-gray-900 dark:text-gray-100 flex items-center">
-                                    <i class="fa-solid fa-exclamation-triangle text-orange-600 mr-2"></i>
-                                    Low Stock Alert
-                                </p>
-                                <span class="bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400 text-xs font-bold px-2 py-0.5 rounded-full">{{ low_stock_count }}</span>
-                            </div>
-                            <div class="max-h-96 overflow-y-auto">
-                                {% for product in low_stock_products %}
-                                <a href="{% url 'products' %}" class="block px-4 py-3 border-b border-gray-100 dark:border-gray-700 last:border-b-0 hover:bg-orange-50 dark:hover:bg-orange-900/10 transition-colors">
-                                    <div class="flex justify-between items-start">
-                                        <div class="flex-1">
-                                            <p class="text-sm font-medium text-gray-900 dark:text-gray-100 group-hover:text-orange-600 transition-colors">
-                                                {{ product.name }}
-                                            </p>
-                                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                                                {{ product.brand }}
-                                            </p>
-                                        </div>
-                                        <span class="ml-3 shrink-0 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {% if product.stock_quantity == 0 %}bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400{% else %}bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400{% endif %}">
-                                            {{ product.stock_quantity }} left
-                                        </span>
-                                    </div>
-                                </a>
-                                {% endfor %}
-                            </div>
-                            <div class="p-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-center">
-                                <a href="{% url 'products' %}" class="inline-flex items-center text-xs text-primary hover:text-blue-700 dark:hover:text-blue-400 font-semibold transition-colors">
-                                    Manage Inventory <i class="fa-solid fa-arrow-right ml-1"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% endif %}
-                
-                <button id="themeToggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-                    <i class="fa-solid fa-moon text-xl" id="themeIcon"></i>
-                </button>
-            </div>
-        </header>
+      <!-- Header -->
+      <header class="h-16 glass-panel border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4 sm:px-6 z-30 sticky top-0">
+        <div class="flex items-center overflow-hidden">
+          <button id="mobileMenuBtn" class="lg:hidden p-2 mr-3 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors flex-shrink-0"><i class="fa-solid fa-bars text-xl"></i></button>
+          <h2 class="text-lg sm:text-xl font-semibold truncate">
+            {% block header %}
+              Dashboard
+            {% endblock %}
+          </h2>
+        </div>
+        <div class="flex items-center space-x-4">
+          <!-- Low Stock Indicator -->
+          {% if low_stock_count > 0 %}
+            <div class="relative group z-[99999]">
+              <button type="button" aria-label="Low stock alerts" class="p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+                <i class="fa-solid fa-exclamation-triangle text-xl"></i>
+                <span class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-orange-600 rounded-full transform translate-x-1/2 -translate-y-1/2">{{ low_stock_count }}</span>
+              </button>
 
-        <!-- Page Content -->
-        <main class="flex-1 overflow-y-auto p-6 relative">
-            {% block content %}{% endblock %}
-        </main>
+              <!-- Low Stock Dropdown -->
+              <div class="absolute right-0 pt-2 w-80 hidden group-hover:block group-focus:block z-[99999] pointer-events-auto">
+                <div class="bg-white dark:bg-darkcard rounded-lg shadow-2xl border border-primary dark:border-primary overflow-hidden">
+                  <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                    <p class="text-sm font-semibold text-gray-900 dark:text-gray-100 flex items-center">
+                      <i class="fa-solid fa-exclamation-triangle text-orange-600 mr-2"></i>
+                      Low Stock Alert
+                    </p>
+                    <span class="bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400 text-xs font-bold px-2 py-0.5 rounded-full">{{ low_stock_count }}</span>
+                  </div>
+                  <div class="max-h-96 overflow-y-auto">
+                    {% for product in low_stock_products %}
+                      <a href="{% url 'products' %}" class="block px-4 py-3 border-b border-gray-100 dark:border-gray-700 last:border-b-0 hover:bg-orange-50 dark:hover:bg-orange-900/10 transition-colors">
+                        <div class="flex justify-between items-start">
+                          <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-900 dark:text-gray-100 group-hover:text-orange-600 transition-colors">{{ product.name }}</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{{ product.brand }}</p>
+                          </div>
+                          <span class="ml-3 shrink-0 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {% if product.stock_quantity == 0 %}
+                              bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400
+                            {% else %}
+                              bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400
+                            {% endif %}">
+                            {{ product.stock_quantity }} left
+                          </span>
+                        </div>
+                      </a>
+                    {% endfor %}
+                  </div>
+                  <div class="p-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-center">
+                    <a href="{% url 'products' %}" class="inline-flex items-center text-xs text-primary hover:text-blue-700 dark:hover:text-blue-400 font-semibold transition-colors">
+                      Manage Inventory
+                      <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+
+          <button id="themeToggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-moon text-xl" id="themeIcon"></i></button>
+        </div>
+      </header>
+
+      <!-- Page Content -->
+      <main class="flex-1 overflow-y-auto p-6 relative">
+        {% block content %}
+        {% endblock %}
+      </main>
     </div>
 
     <!-- Theme Toggle Script -->
     <script>
-        const themeToggle = document.getElementById('themeToggle');
-        const themeIcon = document.getElementById('themeIcon');
-        const html = document.documentElement;
-
-        // Check local storage or system preference
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            html.classList.add('dark');
-            themeIcon.classList.replace('fa-moon', 'fa-sun');
+      const themeToggle = document.getElementById('themeToggle')
+      const themeIcon = document.getElementById('themeIcon')
+      const html = document.documentElement
+      
+      // Check local storage or system preference
+      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        html.classList.add('dark')
+        themeIcon.classList.replace('fa-moon', 'fa-sun')
+      } else {
+        html.classList.remove('dark')
+      }
+      
+      themeToggle.addEventListener('click', () => {
+        html.classList.toggle('dark')
+        if (html.classList.contains('dark')) {
+          localStorage.theme = 'dark'
+          themeIcon.classList.replace('fa-moon', 'fa-sun')
         } else {
-            html.classList.remove('dark');
+          localStorage.theme = 'light'
+          themeIcon.classList.replace('fa-sun', 'fa-moon')
         }
-
-        themeToggle.addEventListener('click', () => {
-            html.classList.toggle('dark');
-            if (html.classList.contains('dark')) {
-                localStorage.theme = 'dark';
-                themeIcon.classList.replace('fa-moon', 'fa-sun');
-            } else {
-                localStorage.theme = 'light';
-                themeIcon.classList.replace('fa-sun', 'fa-moon');
-            }
-        });
-
-        // Mobile Sidebar Toggle
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-
-        function toggleSidebar() {
-            const isClosed = sidebar.classList.contains('-translate-x-full');
-            if (isClosed) {
-                sidebar.classList.remove('-translate-x-full');
-                overlay.classList.remove('hidden');
-                setTimeout(() => overlay.classList.remove('opacity-0'), 10);
-            } else {
-                sidebar.classList.add('-translate-x-full');
-                overlay.classList.add('opacity-0');
-                setTimeout(() => overlay.classList.add('hidden'), 300);
-            }
+      })
+      
+      // Mobile Sidebar Toggle
+      const sidebar = document.getElementById('sidebar')
+      const overlay = document.getElementById('sidebarOverlay')
+      const mobileMenuBtn = document.getElementById('mobileMenuBtn')
+      
+      function toggleSidebar() {
+        const isClosed = sidebar.classList.contains('-translate-x-full')
+        if (isClosed) {
+          sidebar.classList.remove('-translate-x-full')
+          overlay.classList.remove('hidden')
+          setTimeout(() => overlay.classList.remove('opacity-0'), 10)
+        } else {
+          sidebar.classList.add('-translate-x-full')
+          overlay.classList.add('opacity-0')
+          setTimeout(() => overlay.classList.add('hidden'), 300)
         }
-
-        if (mobileMenuBtn && overlay) {
-            mobileMenuBtn.addEventListener('click', toggleSidebar);
-            overlay.addEventListener('click', toggleSidebar);
-        }
+      }
+      
+      if (mobileMenuBtn && overlay) {
+        mobileMenuBtn.addEventListener('click', toggleSidebar)
+        overlay.addEventListener('click', toggleSidebar)
+      }
     </script>
-    
+
     <!-- Global Modal Components -->
     <div id="globalModalOverlay" class="fixed inset-0 bg-gray-900/50 z-[100] hidden backdrop-blur-sm transition-opacity opacity-0 flex items-center justify-center p-4">
-        <div id="globalModal" class="bg-white dark:bg-darkcard rounded-xl shadow-2xl max-w-sm w-full transform scale-95 transition-all opacity-0 overflow-hidden border border-gray-200 dark:border-gray-700">
-            <div id="globalModalHeader" class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
-                <h3 id="globalModalTitle" class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                    <!-- Icon and Title injected by JS -->
-                </h3>
-                <button onclick="closeGlobalModal()" class="text-gray-400 hover:text-gray-500 focus:outline-none">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            <div class="px-6 py-5">
-                <p id="globalModalMessage" class="text-gray-600 dark:text-gray-300 text-sm"></p>
-            </div>
-            <div id="globalModalFooter" class="px-6 py-4 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-3">
-                <!-- Buttons injected by JS -->
-            </div>
+      <div id="globalModal" class="bg-white dark:bg-darkcard rounded-xl shadow-2xl max-w-sm w-full transform scale-95 transition-all opacity-0 overflow-hidden border border-gray-200 dark:border-gray-700">
+        <div id="globalModalHeader" class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+          <h3 id="globalModalTitle" class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2"><!-- Icon and Title injected by JS --></h3>
+          <button onclick="closeGlobalModal()" class="text-gray-400 hover:text-gray-500 focus:outline-none"><i class="fa-solid fa-xmark"></i></button>
         </div>
+        <div class="px-6 py-5">
+          <p id="globalModalMessage" class="text-gray-600 dark:text-gray-300 text-sm"></p>
+        </div>
+        <div id="globalModalFooter" class="px-6 py-4 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-3">
+          <!-- Buttons injected by JS -->
+        </div>
+      </div>
     </div>
 
     <script>
-        // Global Modal Logic
-        const modalOverlay = document.getElementById('globalModalOverlay');
-        const modalBox = document.getElementById('globalModal');
-        const modalTitle = document.getElementById('globalModalTitle');
-        const modalMessage = document.getElementById('globalModalMessage');
-        const modalFooter = document.getElementById('globalModalFooter');
-        
-        let confirmCallback = null;
-
-        function openModalAnimation() {
-            modalOverlay.classList.remove('hidden');
-            // small delay to allow display:block to apply before animating opacity
-            setTimeout(() => {
-                modalOverlay.classList.remove('opacity-0');
-                modalBox.classList.remove('scale-95', 'opacity-0');
-                modalBox.classList.add('scale-100', 'opacity-100');
-            }, 10);
-        }
-
-        function closeGlobalModal() {
-            modalOverlay.classList.add('opacity-0');
-            modalBox.classList.remove('scale-100', 'opacity-100');
-            modalBox.classList.add('scale-95', 'opacity-0');
-            setTimeout(() => {
-                modalOverlay.classList.add('hidden');
-            }, 300);
-            confirmCallback = null;
-        }
-
-        // Custom Alert
-        window.showAlert = function(title, message, type = 'info') {
-            let icon = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
-            if (type === 'error') icon = '<i class="fa-solid fa-circle-exclamation text-red-500"></i>';
-            if (type === 'success') icon = '<i class="fa-solid fa-circle-check text-green-500"></i>';
-            if (type === 'warning') icon = '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>';
-
-            modalTitle.innerHTML = `${icon} ${title}`;
-            modalMessage.textContent = message;
-            
-            modalFooter.innerHTML = `
-                <button onclick="closeGlobalModal()" class="px-4 py-2 bg-primary hover:bg-blue-600 text-white text-sm font-medium rounded-lg shadow-sm transition-colors">
-                    OK
-                </button>
-            `;
-            openModalAnimation();
-        };
-
-        // Custom Confirm
-        window.showConfirm = function(title, message, callback) {
-            modalTitle.innerHTML = `<i class="fa-solid fa-circle-question text-primary"></i> ${title}`;
-            modalMessage.textContent = message;
-            confirmCallback = callback;
-            
-            modalFooter.innerHTML = `
-                <button onclick="closeGlobalModal()" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-sm font-medium rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
-                    Cancel
-                </button>
-                <button onclick="executeConfirm()" class="px-4 py-2 bg-primary hover:bg-blue-600 text-white text-sm font-medium rounded-lg shadow-sm transition-colors">
-                    Confirm
-                </button>
-            `;
-            openModalAnimation();
-        };
-
-        function executeConfirm() {
-            if (confirmCallback) confirmCallback();
-            closeGlobalModal();
-        }
+      // Global Modal Logic
+      const modalOverlay = document.getElementById('globalModalOverlay')
+      const modalBox = document.getElementById('globalModal')
+      const modalTitle = document.getElementById('globalModalTitle')
+      const modalMessage = document.getElementById('globalModalMessage')
+      const modalFooter = document.getElementById('globalModalFooter')
+      
+      let confirmCallback = null
+      
+      function openModalAnimation() {
+        modalOverlay.classList.remove('hidden')
+        // small delay to allow display:block to apply before animating opacity
+        setTimeout(() => {
+          modalOverlay.classList.remove('opacity-0')
+          modalBox.classList.remove('scale-95', 'opacity-0')
+          modalBox.classList.add('scale-100', 'opacity-100')
+        }, 10)
+      }
+      
+      function closeGlobalModal() {
+        modalOverlay.classList.add('opacity-0')
+        modalBox.classList.remove('scale-100', 'opacity-100')
+        modalBox.classList.add('scale-95', 'opacity-0')
+        setTimeout(() => {
+          modalOverlay.classList.add('hidden')
+        }, 300)
+        confirmCallback = null
+      }
+      
+      // Custom Alert
+      window.showAlert = function (title, message, type = 'info') {
+        let icon = '<i class="fa-solid fa-circle-info text-blue-500"></i>'
+        if (type === 'error') icon = '<i class="fa-solid fa-circle-exclamation text-red-500"></i>'
+        if (type === 'success') icon = '<i class="fa-solid fa-circle-check text-green-500"></i>'
+        if (type === 'warning') icon = '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>'
+      
+        modalTitle.innerHTML = `${icon} ${title}`
+        modalMessage.textContent = message
+      
+        modalFooter.innerHTML = `
+                      <button onclick="closeGlobalModal()" class="px-4 py-2 bg-primary hover:bg-blue-600 text-white text-sm font-medium rounded-lg shadow-sm transition-colors">
+                          OK
+                      </button>
+                  `
+        openModalAnimation()
+      }
+      
+      // Custom Confirm
+      window.showConfirm = function (title, message, callback) {
+        modalTitle.innerHTML = `<i class="fa-solid fa-circle-question text-primary"></i> ${title}`
+        modalMessage.textContent = message
+        confirmCallback = callback
+      
+        modalFooter.innerHTML = `
+                      <button onclick="closeGlobalModal()" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-sm font-medium rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                          Cancel
+                      </button>
+                      <button onclick="executeConfirm()" class="px-4 py-2 bg-primary hover:bg-blue-600 text-white text-sm font-medium rounded-lg shadow-sm transition-colors">
+                          Confirm
+                      </button>
+                  `
+        openModalAnimation()
+      }
+      
+      function executeConfirm() {
+        if (confirmCallback) confirmCallback()
+        closeGlobalModal()
+      }
     </script>
-    
-    {% block scripts %}{% endblock %}
-</body>
+
+    {% block scripts %}
+    {% endblock %}
+  </body>
 </html>

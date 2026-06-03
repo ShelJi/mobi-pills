@@ -22,6 +22,30 @@ def billing_view(request):
 def sales_view(request):
     return render(request, 'shop/sales.html')
 
+from django.shortcuts import get_object_or_404
+from .models import Order, Customer
+
+@login_required(login_url='/admin/login/')
+def invoice_detail_view(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    customers = Customer.objects.all()
+    return render(request, 'shop/invoice_detail.html', {'order': order, 'customers': customers})
+
+@login_required(login_url='/admin/login/')
+def change_customer_view(request, order_id):
+    if request.method == 'POST' and request.user.is_staff:
+        customer_id = request.POST.get('customer_id')
+        try:
+            new_customer = Customer.objects.get(id=customer_id)
+            order = Order.objects.get(id=order_id)
+            order.customer = new_customer
+            order.save()
+        except Customer.DoesNotExist:
+            pass
+        except Order.DoesNotExist:
+            pass
+    return redirect('invoice_detail', order_id=order_id)
+
 @login_required(login_url='/admin/login/')
 def customers_view(request):
     return render(request, 'shop/customers.html')

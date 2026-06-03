@@ -1,291 +1,310 @@
 <!DOCTYPE html>
 <html lang="en" class="light">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>JP Mobiles Sales and Service | Explore Products</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
     <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#3b82f6',
-                        secondary: '#1d4ed8',
-                        darkbg: '#0f172a',
-                        darkcard: '#1e293b'
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'system-ui', 'sans-serif'],
-                    }
-                }
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              primary: '#3b82f6',
+              secondary: '#1d4ed8',
+              darkbg: '#0f172a',
+              darkcard: '#1e293b'
+            },
+            fontFamily: {
+              sans: ['Inter', 'system-ui', 'sans-serif']
             }
+          }
         }
+      }
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s, color 0.3s; }
-        
-        .hero-pattern {
-            background-color: #f8fafc;
-            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
-            background-size: 20px 20px;
-        }
-        .dark .hero-pattern {
-            background-color: #0f172a;
-            background-image: radial-gradient(#334155 1px, transparent 1px);
-        }
-
-        .glass-nav {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-        }
-        .dark .glass-nav {
-            background: rgba(15, 23, 42, 0.8);
-            border-bottom: 1px solid rgba(51, 65, 85, 0.8);
-        }
-
-        .product-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .product-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 24px -10px rgba(59, 130, 246, 0.3);
-        }
-
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+      
+      body {
+        font-family: 'Inter', sans-serif;
+        transition: background-color 0.3s, color 0.3s;
+      }
+      
+      .hero-pattern {
+        background-color: #f8fafc;
+        background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+        background-size: 20px 20px;
+      }
+      
+      .dark .hero-pattern {
+        background-color: #0f172a;
+        background-image: radial-gradient(#334155 1px, transparent 1px);
+      }
+      
+      .glass-nav {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+      }
+      
+      .dark .glass-nav {
+        background: rgba(15, 23, 42, 0.8);
+        border-bottom: 1px solid rgba(51, 65, 85, 0.8);
+      }
+      
+      .product-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      
+      .product-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px -10px rgba(59, 130, 246, 0.3);
+      }
+      
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+      
+      .dark ::-webkit-scrollbar-thumb {
+        background: #475569;
+      }
     </style>
-</head>
-<body class="bg-gray-50 text-gray-900 dark:bg-darkbg dark:text-gray-100 antialiased min-h-screen flex flex-col">
+  </head>
 
+  <body class="bg-gray-50 text-gray-900 dark:bg-darkbg dark:text-gray-100 antialiased min-h-screen flex flex-col">
     <!-- Navigation -->
     <nav class="glass-nav sticky top-0 z-50 transition-colors">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white shadow-lg">
-                        <i class="fa-solid fa-mobile-screen-button text-xl"></i>
-                    </div>
-                    <div>
-                        <h1 class="font-bold text-xl leading-tight tracking-tight text-gray-900 dark:text-white">JP Mobiles</h1>
-                        <p class="text-xs font-semibold text-primary uppercase tracking-widest">Sales & Service</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-4">
-                    <button id="themeToggle" class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-colors">
-                        <i class="fa-solid fa-moon text-lg" id="themeIcon"></i>
-                    </button>
-                    {% if user.is_authenticated %}
-                    <button>
-                        <a href="{% url 'dashboard' %}" class="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary">
-                        Dashboard
-                    </a>
-                    </button>
-                    {% else %}
-                    <button>
-                        <a href="{% url 'login' %}" class="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary">
-                        Login
-                    </a>
-                </button>
-                    {% endif %}
-                </div>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-20">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white shadow-lg">
+              <i class="fa-solid fa-mobile-screen-button text-xl"></i>
             </div>
+            <div>
+              <h1 class="font-bold text-xl leading-tight tracking-tight text-gray-900 dark:text-white">JP Mobiles</h1>
+              <p class="text-xs font-semibold text-primary uppercase tracking-widest">Sales & Service</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-4">
+            <button id="themeToggle" class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-colors"><i class="fa-solid fa-moon text-lg" id="themeIcon"></i></button>
+            {% if user.is_authenticated %}
+              <button><a href="{% url 'dashboard' %}" class="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary">Dashboard</a></button>
+            {% else %}
+              <button><a href="{% url 'login' %}" class="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary">Login</a></button>
+            {% endif %}
+          </div>
         </div>
+      </div>
     </nav>
 
     <!-- Hero Section -->
     <div class="hero-pattern border-b border-gray-200 dark:border-gray-800 transition-colors relative overflow-hidden">
-        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 dark:bg-primary/10 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
-        <div class="absolute top-1/3 right-1/4 w-96 h-96 bg-purple-300/30 dark:bg-purple-900/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
-        
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 relative z-10 text-center">
-            <h2 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-6">
-                Discover Premium <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-600">Smartphones</span>
-            </h2>
-            <p class="mt-4 text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto font-light leading-relaxed mb-10">
-                Explore our wide collection of the latest mobile devices, accessories, and reliable repair services at JP Mobiles.
-            </p>
-            
-            <!-- Search Bar -->
-            <div class="max-w-xl mx-auto relative group">
-                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <i class="fa-solid fa-search text-gray-400 group-focus-within:text-primary transition-colors"></i>
-                </div>
-                <input type="text" id="searchInput" class="block w-full pl-12 pr-4 py-4 rounded-2xl border-0 ring-1 ring-gray-200 dark:ring-gray-700 bg-white/80 dark:bg-darkcard/80 backdrop-blur-sm text-gray-900 dark:text-white shadow-lg focus:ring-2 focus:ring-primary focus:outline-none transition-shadow text-lg" placeholder="Search by brand, model, or IMEI...">
-            </div>
+      <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 dark:bg-primary/10 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
+      <div class="absolute top-1/3 right-1/4 w-96 h-96 bg-purple-300/30 dark:bg-purple-900/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 relative z-10 text-center">
+        <h2 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-6">
+          Discover Premium
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-600">Smartphones</span>
+        </h2>
+        <p class="mt-4 text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto font-light leading-relaxed mb-10">Explore our wide collection of the latest mobile devices, accessories, and reliable repair services at JP Mobiles.</p>
+
+        <!-- Search Bar -->
+        <div class="max-w-xl mx-auto relative group">
+          <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <i class="fa-solid fa-search text-gray-400 group-focus-within:text-primary transition-colors"></i>
+          </div>
+          <input type="text" id="searchInput" class="block w-full pl-12 pr-4 py-4 rounded-2xl border-0 ring-1 ring-gray-200 dark:ring-gray-700 bg-white/80 dark:bg-darkcard/80 backdrop-blur-sm text-gray-900 dark:text-white shadow-lg focus:ring-2 focus:ring-primary focus:outline-none transition-shadow text-lg" placeholder="Search by brand, model, or IMEI..." />
         </div>
+      </div>
     </div>
 
     <!-- Product Grid Section -->
     <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
-        <div class="flex items-center justify-between mb-8">
-            <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Available Devices</h3>
-            <span class="text-sm font-medium text-gray-500 dark:text-gray-400" id="productCount">{{ products|length }} items</span>
-        </div>
+      <div class="flex items-center justify-between mb-8">
+        <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Available Devices</h3>
+        <span class="text-sm font-medium text-gray-500 dark:text-gray-400" id="productCount">{{ products|length }} items</span>
+      </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8" id="productGrid">
-            {% for product in products %}
-            <div class="product-card bg-white dark:bg-darkcard rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden flex flex-col h-full group" data-name="{{ product.name|lower }}" data-brand="{{ product.brand|lower }}" data-imei="{{ product.imei|lower }}">
-                
-                <!-- Product Image -->
-                <div class="h-56 bg-gray-100 dark:bg-gray-800/50 flex flex-col items-center justify-center relative overflow-hidden">
-                    {% if product.image %}
-                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
-                    {% else %}
-                        <div class="w-24 h-32 bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-xl shadow-inner border border-white/50 dark:border-gray-600/50 flex items-center justify-center relative transform group-hover:scale-105 transition-transform duration-500">
-                            <!-- Camera bump representation -->
-                            <div class="absolute top-2 left-2 w-6 h-8 bg-black/10 dark:bg-black/20 rounded-md"></div>
-                            <span class="text-2xl font-bold text-gray-400/50 dark:text-gray-500/30 rotate-90 tracking-widest uppercase">
-                                {{ product.brand }}
-                            </span>
-                        </div>
-                    {% endif %}
-                    
-                    {% if product.stock_quantity <= 0 %}
-                        <span class="absolute top-3 right-3 bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-400 text-xs font-bold px-3 py-1 rounded-full border border-red-200 dark:border-red-800 shadow-sm backdrop-blur-sm">Out of Stock</span>
-                    {% elif product.stock_quantity < 5 %}
-                        <span class="absolute top-3 right-3 bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-400 text-xs font-bold px-3 py-1 rounded-full border border-orange-200 dark:border-orange-800 shadow-sm backdrop-blur-sm">Only {{ product.stock_quantity }} Left</span>
-                    {% else %}
-                        <span class="absolute top-3 right-3 bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-400 text-xs font-bold px-3 py-1 rounded-full border border-green-200 dark:border-green-800 shadow-sm backdrop-blur-sm">In Stock</span>
-                    {% endif %}
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8" id="productGrid">
+        {% for product in products %}
+          <div class="product-card bg-white dark:bg-darkcard rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden flex flex-col h-full group" data-name="{{ product.name|lower }}" data-brand="{{ product.brand|lower }}" data-imei="{{ product.imei|lower }}">
+            <!-- Product Image -->
+            <div class="h-56 bg-gray-100 dark:bg-gray-800/50 flex flex-col items-center justify-center relative overflow-hidden">
+              {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" />
+              {% else %}
+                <div class="w-24 h-32 bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-xl shadow-inner border border-white/50 dark:border-gray-600/50 flex items-center justify-center relative transform group-hover:scale-105 transition-transform duration-500">
+                  <!-- Camera bump representation -->
+                  <div class="absolute top-2 left-2 w-6 h-8 bg-black/10 dark:bg-black/20 rounded-md"></div>
+                  <span class="text-2xl font-bold text-gray-400/50 dark:text-gray-500/30 rotate-90 tracking-widest uppercase">{{ product.brand }}</span>
                 </div>
-
-                <!-- Product Details -->
-                <div class="p-5 flex flex-col flex-1">
-                    <p class="text-xs font-bold text-primary uppercase tracking-wider mb-1">{{ product.brand }}</p>
-                    <h4 class="text-lg font-bold text-gray-900 dark:text-white leading-tight mb-2">{{ product.name }}</h4>
-                    
-                    {% if product.imei %}
-                    {% else %}
-                    {% endif %}
-
-                    <div class="mt-auto pt-4 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between">
-                        <div class="flex flex-col">
-                            <span class="text-xs text-gray-500 dark:text-gray-400">Price</span>
-                            <span class="text-xl font-bold text-gray-900 dark:text-white">₹{{ product.price|floatformat:0 }}</span>
-                        </div>
-                    </div>
-                </div>
+              {% endif %} {% if product.stock_quantity <= 0 %}
+                <span class="absolute top-3 right-3 bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-400 text-xs font-bold px-3 py-1 rounded-full border border-red-200 dark:border-red-800 shadow-sm backdrop-blur-sm">Out of Stock</span>
+              {% elif product.stock_quantity < 5 %}
+                <span class="absolute top-3 right-3 bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-400 text-xs font-bold px-3 py-1 rounded-full border border-orange-200 dark:border-orange-800 shadow-sm backdrop-blur-sm">Only {{ product.stock_quantity }} Left</span>
+              {% else %}
+                <span class="absolute top-3 right-3 bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-400 text-xs font-bold px-3 py-1 rounded-full border border-green-200 dark:border-green-800 shadow-sm backdrop-blur-sm">In Stock</span>
+              {% endif %}
             </div>
-            {% empty %}
-            <div class="col-span-full py-20 text-center flex flex-col items-center justify-center">
-                <div class="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
-                    <i class="fa-solid fa-box-open text-3xl text-gray-400 dark:text-gray-500"></i>
+
+            <!-- Product Details -->
+            <div class="p-5 flex flex-col flex-1">
+              <p class="text-xs font-bold text-primary uppercase tracking-wider mb-1">{{ product.brand }}</p>
+              <h4 class="text-lg font-bold text-gray-900 dark:text-white leading-tight mb-2">{{ product.name }}</h4>
+
+              {% if product.imei %}
+
+              {% else %}
+
+              {% endif %}
+
+              <div class="mt-auto pt-4 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between">
+                <div class="flex flex-col">
+                  <span class="text-xs text-gray-500 dark:text-gray-400">Price</span>
+                  <span class="text-xl font-bold text-gray-900 dark:text-white">₹{{ product.price|floatformat:0 }}</span>
                 </div>
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white">No products available</h3>
-                <p class="text-gray-500 mt-1">Check back later for new arrivals.</p>
+              </div>
             </div>
-            {% endfor %}
-        </div>
-        
-        <!-- Empty Search State -->
-        <div id="noResults" class="hidden py-20 text-center flex flex-col items-center justify-center">
+          </div>
+        {% empty %}
+          <div class="col-span-full py-20 text-center flex flex-col items-center justify-center">
             <div class="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
-                <i class="fa-solid fa-search text-3xl text-gray-400 dark:text-gray-500"></i>
+              <i class="fa-solid fa-box-open text-3xl text-gray-400 dark:text-gray-500"></i>
             </div>
-            <h3 class="text-lg font-medium text-gray-900 dark:text-white">No matches found</h3>
-            <p class="text-gray-500 mt-1">Try adjusting your search query.</p>
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white">No products available</h3>
+            <p class="text-gray-500 mt-1">Check back later for new arrivals.</p>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Empty Search State -->
+      <div id="noResults" class="hidden py-20 text-center flex flex-col items-center justify-center">
+        <div class="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
+          <i class="fa-solid fa-search text-3xl text-gray-400 dark:text-gray-500"></i>
         </div>
+        <h3 class="text-lg font-medium text-gray-900 dark:text-white">No matches found</h3>
+        <p class="text-gray-500 mt-1">Try adjusting your search query.</p>
+      </div>
     </main>
 
     <!-- Footer -->
     <footer class="bg-white dark:bg-darkcard border-t border-gray-200 dark:border-gray-800 py-12 mt-auto transition-colors">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 text-center md:text-left">
-                <div>
-                    <div class="flex items-center justify-center md:justify-start gap-2 mb-4">
-                        <i class="fa-solid fa-mobile-screen-button text-primary text-xl"></i>
-                        <span class="font-bold text-lg text-gray-900 dark:text-white">JP Mobiles</span>
-                    </div>
-                    <p class="text-gray-500 dark:text-gray-400 text-sm">Your trusted destination for premium smartphones and reliable repair services.</p>
-                </div>
-                <div>
-                    <h4 class="font-bold text-gray-900 dark:text-white mb-4">Contact Us</h4>
-                    <ul class="space-y-2 text-sm text-gray-500 dark:text-gray-400">
-                        <li><i class="fa-solid fa-location-dot w-5 text-center mr-1"></i> JP Mobiles Near Apollo Pharmacy Kappukadu</li>
-                        <li><a href="tel:9003333914" class="hover:text-primary transition-colors"><i class="fa-solid fa-phone w-5 text-center mr-1"></i> 9003333914</a></li>
-                        <li><a href="mailto:jpmobilestn@gmail.com" class="hover:text-primary transition-colors"><i class="fa-solid fa-envelope w-5 text-center mr-1"></i> jpmobilestn@gmail.com</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-bold text-gray-900 dark:text-white mb-4">Store Hours</h4>
-                    <ul class="space-y-2 text-sm text-gray-500 dark:text-gray-400">
-                        <li>Monday - Saturday: 10:00 AM - 9:00 PM</li>
-                        <li>Sunday: 11:00 AM - 6:00 PM</li>
-                    </ul>
-                </div>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 text-center md:text-left">
+          <div>
+            <div class="flex items-center justify-center md:justify-start gap-2 mb-4">
+              <i class="fa-solid fa-mobile-screen-button text-primary text-xl"></i>
+              <span class="font-bold text-lg text-gray-900 dark:text-white">JP Mobiles</span>
             </div>
-            <div class="pt-8 border-t border-gray-200 dark:border-gray-800 text-center text-sm text-gray-500 dark:text-gray-400">
-                &copy; 2026 JP Mobiles Sales and Service. <br> All Rights Reserved |  <a href="https://plsofttech.com" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline font-medium">PL Softtech Solutions</a>.
-            </div>
+            <p class="text-gray-500 dark:text-gray-400 text-sm">Your trusted destination for premium smartphones and reliable repair services.</p>
+          </div>
+          <div>
+            <h4 class="font-bold text-gray-900 dark:text-white mb-4">Contact Us</h4>
+            <ul class="space-y-2 text-sm text-gray-500 dark:text-gray-400">
+              <li>
+                <i class="fa-solid fa-location-dot w-5 text-center mr-1"></i> JP MOBILES Opp Apollo Pharmacy Kappukadu
+              </li>
+              <li>
+                <a href="tel:9003333914" class="hover:text-primary transition-colors">
+                  <i class="fa-solid fa-phone w-5 text-center mr-1"></i>
+                  9003333914
+                </a>
+              </li>
+              <li>
+                <a href="mailto:jpmobilestn@gmail.com" class="hover:text-primary transition-colors">
+                  <i class="fa-solid fa-envelope w-5 text-center mr-1"></i>
+                  jpmobilestn@gmail.com
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-bold text-gray-900 dark:text-white mb-4">Store Hours</h4>
+            <ul class="space-y-2 text-sm text-gray-500 dark:text-gray-400">
+              <li>Monday - Saturday: 9:00 AM - 9:00 PM</li>
+              <li>Sunday: 4:00 PM - 9:00 PM</li>
+            </ul>
+          </div>
         </div>
+        <div class="pt-8 border-t border-gray-200 dark:border-gray-800 text-center text-sm text-gray-500 dark:text-gray-400">
+          &copy; 2026 JP Mobiles Sales and Service. <br />
+          All Rights Reserved |
+          <a href="https://plsofttech.com" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline font-medium">PL Softtech Solutions</a>.
+        </div>
+      </div>
     </footer>
 
     <!-- Scripts -->
     <script>
-        // Theme Toggle Logic
-        const themeToggle = document.getElementById('themeToggle');
-        const themeIcon = document.getElementById('themeIcon');
-        const html = document.documentElement;
-
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            html.classList.add('dark');
-            themeIcon.classList.replace('fa-moon', 'fa-sun');
+      // Theme Toggle Logic
+      const themeToggle = document.getElementById('themeToggle')
+      const themeIcon = document.getElementById('themeIcon')
+      const html = document.documentElement
+      
+      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        html.classList.add('dark')
+        themeIcon.classList.replace('fa-moon', 'fa-sun')
+      } else {
+        html.classList.remove('dark')
+      }
+      
+      themeToggle.addEventListener('click', () => {
+        html.classList.toggle('dark')
+        if (html.classList.contains('dark')) {
+          localStorage.theme = 'dark'
+          themeIcon.classList.replace('fa-moon', 'fa-sun')
         } else {
-            html.classList.remove('dark');
+          localStorage.theme = 'light'
+          themeIcon.classList.replace('fa-sun', 'fa-moon')
         }
-
-        themeToggle.addEventListener('click', () => {
-            html.classList.toggle('dark');
-            if (html.classList.contains('dark')) {
-                localStorage.theme = 'dark';
-                themeIcon.classList.replace('fa-moon', 'fa-sun');
-            } else {
-                localStorage.theme = 'light';
-                themeIcon.classList.replace('fa-sun', 'fa-moon');
-            }
-        });
-
-        // Search Filter Logic
-        const searchInput = document.getElementById('searchInput');
-        const productCards = document.querySelectorAll('.product-card');
-        const productCount = document.getElementById('productCount');
-        const noResults = document.getElementById('noResults');
-        const productGrid = document.getElementById('productGrid');
-
-        searchInput.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase();
-            let count = 0;
-
-            productCards.forEach(card => {
-                const name = card.getAttribute('data-name') || '';
-                const brand = card.getAttribute('data-brand') || '';
-                const imei = card.getAttribute('data-imei') || '';
-
-                if (name.includes(query) || brand.includes(query) || imei.includes(query)) {
-                    card.style.display = 'flex';
-                    count++;
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-
-            productCount.textContent = `${count} items`;
-
-            if (count === 0 && productCards.length > 0) {
-                noResults.classList.remove('hidden');
-                productGrid.style.display = 'none';
-            } else {
-                noResults.classList.add('hidden');
-                productGrid.style.display = 'grid';
-            }
-        });
+      })
+      
+      // Search Filter Logic
+      const searchInput = document.getElementById('searchInput')
+      const productCards = document.querySelectorAll('.product-card')
+      const productCount = document.getElementById('productCount')
+      const noResults = document.getElementById('noResults')
+      const productGrid = document.getElementById('productGrid')
+      
+      searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase()
+        let count = 0
+      
+        productCards.forEach((card) => {
+          const name = card.getAttribute('data-name') || ''
+          const brand = card.getAttribute('data-brand') || ''
+          const imei = card.getAttribute('data-imei') || ''
+      
+          if (name.includes(query) || brand.includes(query) || imei.includes(query)) {
+            card.style.display = 'flex'
+            count++
+          } else {
+            card.style.display = 'none'
+          }
+        })
+      
+        productCount.textContent = `${count} items`
+      
+        if (count === 0 && productCards.length > 0) {
+          noResults.classList.remove('hidden')
+          productGrid.style.display = 'none'
+        } else {
+          noResults.classList.add('hidden')
+          productGrid.style.display = 'grid'
+        }
+      })
     </script>
-</body>
+  </body>
 </html>
