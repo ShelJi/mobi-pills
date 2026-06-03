@@ -1,26 +1,26 @@
-# ---
-# deployment:
-#   tasks:
-#     # Application path
-#     - export DEPLOYPATH=/home/ybtzxyhi/mobile.plsofttech.com
+---
+deployment:
+  tasks:
+    # Application path
+    - export DEPLOYPATH=/home/ybtzxyhi/mobile.plsofttech.com
 
-#     # Sync repository files
-#     - /usr/bin/rsync -av --exclude='.git' ./ $DEPLOYPATH/
+    # Sync repository files
+    - /usr/bin/rsync -av --exclude='.git' ./ $DEPLOYPATH/
 
-#     # Activate virtual environment and move to app directory
-#     - . /home/ybtzxyhi/virtualenv/mobile.plsofttech.com/3.13/bin/activate && cd $DEPLOYPATH
+    # Activate virtual environment and move to app directory
+    - . /home/ybtzxyhi/virtualenv/mobile.plsofttech.com/3.13/bin/activate && cd $DEPLOYPATH
 
-#     # Install dependencies
-#     - uv sync --active
+    # Install dependencies
+    - uv sync --active
 
-#     # Run migrations
-#     - python manage.py migrate --noinput
+    # Run migrations
+    - python manage.py migrate --noinput
 
-#     # Collect static files
-#     - python manage.py collectstatic --noinput
+    # Collect static files
+    - python manage.py collectstatic --noinput
 
-#     # Ensure Passenger restart directory exists
-#     - mkdir -p tmp
+    # Ensure Passenger restart directory exists
+    - mkdir -p tmp
 
-#     # Restart Django Passenger app
-#     - touch tmp/restart.txt
+    # Restart Django Passenger app
+    - touch tmp/restart.txt
