@@ -62,11 +62,6 @@
               <input type="text" id="name" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary" />
             </div>
 
-            <div class="col-span-2">
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description (Optional)</label>
-              <textarea id="description" rows="2" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
-            </div>
-
             <div>
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Brand</label>
               <input type="text" id="brand" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary" />
@@ -108,10 +103,10 @@
               <input type="number" id="stock" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary" />
             </div>
 
-            <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">IMEI/SKU (Optional)</label>
-              <input type="text" id="imei" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary" />
-            </div>
+            <div id="imeiWrapper" class="col-span-1" style="display:none;">
+				<label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">IMEI/SKU (Optional)</label>
+				<input type="text" id="imei" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary" />
+			</div>
 
             <div class="col-span-2">
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Product Image</label>
@@ -124,6 +119,11 @@
                 <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Visible in shop</span>
               </label>
             </div>
+            
+            <div class="col-span-2">
+				<label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Quick Product</label>
+				<input type="checkbox" id="quick_product" class="w-4 h-4 text-primary bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-600 rounded focus:ring-primary focus:ring-2" />
+			</div>
           </div>
 
           <div class="mt-6 flex justify-end space-x-3 pt-4 border-t border-gray-100 dark:border-gray-700">
@@ -173,7 +173,7 @@
 		return cookieValue;
 	}
 
-	const csrftoken = getCookie("csrftoken");
+
 
 	function fetchCategories() {
 		fetch("/api/categories/")
@@ -196,6 +196,15 @@
 			});
 	}
 
+document.getElementById('category').addEventListener('change', toggleImeiField);
+
+// Toggle IMEI field visibility based on selected category
+function toggleImeiField() {
+    const catSelect = document.getElementById('category');
+    const selectedText = catSelect.options[catSelect.selectedIndex]?.textContent.toLowerCase() || "";
+    document.getElementById('imeiWrapper').style.display = selectedText.includes('mobile') ? 'block' : 'none';
+}
+
 	function fetchSuppliers() {
 		fetch("/api/suppliers/")
 			.then((res) => res.json())
@@ -207,9 +216,7 @@
 				data.forEach((sup) => {
 					const option = document.createElement("option");
 					option.value = sup.id;
-					option.textContent = sup.company_name
-						? `${sup.name} - (${sup.company_name})`
-						: sup.name;
+					option.textContent = sup.name;
 					select.appendChild(option);
 				});
 			});
@@ -300,7 +307,7 @@
 			document.getElementById("modalTitle").textContent = "Edit Product";
 			document.getElementById("productId").value = product.id;
 			document.getElementById("name").value = product.name;
-			document.getElementById("description").value = product.description || "";
+
 			document.getElementById("brand").value = product.brand;
 			document.getElementById("model").value = product.model || "";
 			document.getElementById("category").value = product.category || "";
@@ -309,7 +316,10 @@
 			document.getElementById("price").value = product.price;
 			document.getElementById("stock").value = product.stock_quantity;
 			document.getElementById("imei").value = product.imei || "";
+			// Update IMEI field visibility based on selected category
+			toggleImeiField();
 			document.getElementById("is_visible").checked = product.is_visible;
+			document.getElementById("quick_product").checked = product.quick_product;
 		} else {
 			document.getElementById("modalTitle").textContent = "Add New Product";
 		}
@@ -356,9 +366,7 @@
 		formData.append("brand", document.getElementById("brand").value);
 		formData.append("price", document.getElementById("price").value);
 		formData.append("stock_quantity", document.getElementById("stock").value);
-
-		const description = document.getElementById("description").value;
-		if (description) formData.append("description", description);
+		formData.append("quick_product", document.getElementById("quick_product").checked);
 
 		const model = document.getElementById("model").value;
 		if (model) formData.append("model", model);

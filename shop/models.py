@@ -10,7 +10,7 @@ import os
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
-    description = models.TextField(blank=True, null=True)
+    # description = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -20,8 +20,8 @@ class Category(models.Model):
         
 class Supplier(models.Model):
     name = models.CharField(max_length=200)
-    description = models.TextField(blank=True, null=True)
-    company_name = models.CharField(max_length=200, blank=True, null=True)
+    # description = models.TextField(blank=True, null=True)
+    # company_name = models.CharField(max_length=200, blank=True, null=True)
     phone1 = models.CharField(max_length=20, blank=True, null=True)
     phone2 = models.CharField(max_length=20, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
@@ -29,11 +29,11 @@ class Supplier(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.name} - ({self.company_name})" if self.company_name else self.name
+        return f"{self.name}"
 
 class Product(models.Model):
     name = models.CharField(max_length=200)
-    description = models.TextField(blank=True, null=True)
+    # description = models.TextField(blank=True, null=True)
     brand = models.CharField(max_length=100)
     model = models.CharField(max_length=100, blank=True, null=True)
     imei = models.CharField(max_length=50, blank=True, null=True, help_text="Optional IMEI number")
@@ -44,6 +44,7 @@ class Product(models.Model):
     supplier = models.ForeignKey(Supplier, on_delete=models.SET_NULL, null=True, related_name='products')
     image = models.ImageField(upload_to='product_images/', blank=True, null=True)
     is_visible = models.BooleanField(default=True)
+    quick_product = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

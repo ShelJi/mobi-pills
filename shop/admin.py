@@ -1,9 +1,9 @@
 from django.contrib import admin
-from .models import Category, Product, Customer, Order, OrderItem
+from .models import Category, Product, Customer, Order, OrderItem, Supplier
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'description')
+    list_display = ('name',)
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
@@ -26,3 +26,6 @@ class OrderAdmin(admin.ModelAdmin):
     list_filter = ('status', 'created_at')
     search_fields = ('invoice_number', 'customer__name', 'customer__phone')
     inlines = [OrderItemInline]
+
+
+admin.site.register(Supplier)

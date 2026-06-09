@@ -44,12 +44,7 @@
 					<option value="all">All Categories</option>
 				</select>
 			</div>
-			<button
-				class="bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg transition-colors"
-				title="Scan Barcode/QR"
-			>
-				<i class="fa-solid fa-barcode text-lg"></i>
-			</button>
+			
 		</div>
 
 		<!-- Product Grid -->
@@ -409,7 +404,10 @@
 				(p.imei && p.imei.toLowerCase().includes(search));
 			const matchesCategory =
 				selectedCategory === "all" || String(p.category) === String(selectedCategory);
-			return matchesSearch && matchesCategory;
+			// Apply quick_product filter only when displaying default view (no category filter and empty search)
+			const applyQuickFilter = selectedCategory === "all" && filterText.trim() === "";
+			const isQuick = p.quick_product === true;
+			return matchesSearch && matchesCategory && (applyQuickFilter ? isQuick : true);
 		});
 
 		if (filtered.length === 0) {
@@ -634,15 +632,23 @@
 	}
 
 	function clearCustomer() {
-		document.getElementById("customerPhone").value = "";
-		document.getElementById("customerName").value = "";
-		document.getElementById("customerPhone").dataset.customerId = "";
-		const dropdown = document.getElementById("customerDropdown");
-		if (dropdown) {
-			dropdown.classList.add("hidden");
-		}
-		saveDraftToLocalStorage();
-	}
+    // Clear customer fields
+    document.getElementById("customerPhone").value = "";
+    document.getElementById("customerName").value = "";
+    document.getElementById("customerPhone").dataset.customerId = "";
+    // Hide dropdown if visible
+    const dropdown = document.getElementById("customerDropdown");
+    if (dropdown) {
+        dropdown.classList.add("hidden");
+    }
+    // Clear cart and related draft
+    cart = [];
+    renderCart();
+    // Remove draft from local storage
+    localStorage.removeItem("posDraft");
+    // Save empty draft state
+    saveDraftToLocalStorage();
+}
 
 	async function submitOrder(status) {
 		if (cart.length === 0) {
@@ -701,21 +707,26 @@
 				renderCart();
 				fetchProducts(); // Refresh stock
 
-				btnCheckout.innerHTML = '<i class="fa-solid fa-check mr-2"></i> Success!';
-				btnCheckout.classList.replace("bg-green-500", "bg-blue-500");
-
-				setTimeout(() => {
-					btnCheckout.innerHTML = originalText;
-					btnCheckout.disabled = false;
-					btnCheckout.classList.replace("bg-blue-500", "bg-green-500");
-					if (status === "Completed")
-						showAlert(
-							"Success",
-							`Order Complete! Invoice: ${orderData.invoice_number}`,
-							"success",
-						);
-					else showAlert("Saved", "Draft Saved Successfully to Server.", "success");
-				}, 1500);
+        // Update button UI to indicate success
+        btnCheckout.innerHTML = '<i class="fa-solid fa-check mr-2"></i> Success!';
+        btnCheckout.classList.replace("bg-green-500", "bg-blue-500");
+        // Immediate redirect for completed orders
+        if (status === "Completed") {
+            showAlert(
+                "Success",
+                `Order Complete! Invoice: ${orderData.invoice_number}`,
+                "success",
+            );
+            window.location.href = `/sales/invoice/${orderData.id}/`;
+        } else {
+            showAlert("Saved", "Draft Saved Successfully to Server.", "success");
+        }
+        // Restore original button after a short delay (optional, as page may navigate away)
+        setTimeout(() => {
+            btnCheckout.innerHTML = originalText;
+            btnCheckout.disabled = false;
+            btnCheckout.classList.replace("bg-blue-500", "bg-green-500");
+        }, 1500);
 			} else {
 				showAlert("Error", "Failed to submit order.", "error");
 				btnCheckout.innerHTML = originalText;

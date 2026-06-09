@@ -89,7 +89,7 @@
 
         <div class="mt-6 flex justify-end space-x-3 pt-4 border-t border-gray-100 dark:border-gray-700 print:hidden">
           <button onclick="closeOrderModal()" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors font-medium">Close</button>
-          <button onclick="window.print()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-sm transition-colors font-medium flex items-center"><i class="fa-solid fa-print mr-2"></i> Print Invoice</button>
+          {# <button onclick="window.print()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-sm transition-colors font-medium flex items-center"><i class="fa-solid fa-print mr-2"></i> Print Invoice</button> #}
         </div>
       </div>
     </div>
@@ -245,6 +245,8 @@
                     <button onclick="viewOrder(${order.id})" class="text-blue-500 hover:text-blue-700 dark:hover:text-blue-400 p-2" title="View Details">
                         <i class="fa-solid fa-eye"></i>
                     </button>
+<a href="/sales/invoice/${order.id}/" class="text-green-600 hover:text-green-800 dark:hover:text-green-400 p-2" title="Invoice Detail">                        <i class="fa-solid fa-file-invoice"></i>
+                    </a>
                 </td>
             `;
 			tbody.appendChild(tr);
