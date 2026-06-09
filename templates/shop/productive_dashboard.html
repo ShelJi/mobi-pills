@@ -1,0 +1,754 @@
+{% extends 'base.html' %}
+{% block title %}Productive Dashboard - JP Mobiles{% endblock %}
+{% block header %}Productive Dashboard{% endblock %}
+
+{% block content %}
+<style>
+  /* Premium Glassmorphic Styles and Micro-Animations */
+  .fade-in {
+    animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .glass-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .dark .glass-card {
+    background: rgba(31, 41, 55, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .glass-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 20px -10px rgba(0, 0, 0, 0.08);
+  }
+  .dark .glass-card:hover {
+    box-shadow: 0 12px 20px -10px rgba(0, 0, 0, 0.3);
+  }
+
+  .glow-green {
+    box-shadow: 0 0 15px -3px rgba(16, 185, 129, 0.2);
+  }
+  .dark .glow-green {
+    box-shadow: 0 0 20px -3px rgba(16, 185, 129, 0.15);
+  }
+
+  .glow-red {
+    box-shadow: 0 0 15px -3px rgba(239, 68, 68, 0.2);
+  }
+  .dark .glow-red {
+    box-shadow: 0 0 20px -3px rgba(239, 68, 68, 0.15);
+  }
+
+  /* Custom switch or radio pills */
+  .pill-btn {
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .pill-btn.active {
+    background: #3b82f6;
+    color: white;
+    box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+  }
+  
+  /* Timeline item hover */
+  .timeline-item {
+    transition: background-color 0.2s ease;
+  }
+  
+  /* Accordion transition */
+  .accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .accordion-open .accordion-content {
+    max-height: 1000px;
+  }
+</style>
+
+<div class="space-y-6 fade-in pb-12">
+  <!-- Top Bar: Title & Days Filter -->
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white/40 dark:bg-darkcard/20 p-4 rounded-2xl border border-gray-200/50 dark:border-gray-700/30 backdrop-blur-md">
+    <div>
+      <h2 class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">Productive Insights</h2>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Real-time analysis of profit, loss, expenses, and supplier inventories.</p>
+    </div>
+    
+    <!-- Filter options (7, 30, 90, 180, 365 Days) -->
+    <div class="flex bg-gray-100 dark:bg-gray-800 p-1.5 rounded-xl border border-gray-200 dark:border-gray-700 shadow-inner">
+      <button onclick="changePeriod(7)" id="btn-7" class="pill-btn px-4 py-1.5 text-xs font-semibold rounded-lg text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">7 Days</button>
+      <button onclick="changePeriod(30)" id="btn-30" class="pill-btn px-4 py-1.5 text-xs font-semibold rounded-lg text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white active">30 Days</button>
+      <button onclick="changePeriod(90)" id="btn-90" class="pill-btn px-4 py-1.5 text-xs font-semibold rounded-lg text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">90 Days</button>
+      <button onclick="changePeriod(365)" id="btn-365" class="pill-btn px-4 py-1.5 text-xs font-semibold rounded-lg text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">1 Year</button>
+    </div>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- Card 1: Net Profit & ROI -->
+    <div id="profitCard" class="glass-card rounded-2xl p-6 relative overflow-hidden group">
+      <!-- Glow background -->
+      <div id="profitCardGlow" class="absolute -right-20 -bottom-20 w-48 h-48 rounded-full blur-3xl opacity-20 transition-all duration-500"></div>
+      
+      <div class="flex justify-between items-start">
+        <div>
+          <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold tracking-wider uppercase">Net Profit & P&L Status</p>
+          <h3 id="netProfitAmount" class="text-3xl font-black text-gray-800 dark:text-white mt-3 flex items-baseline">
+            ₹0.00
+          </h3>
+          <p id="profitRoiContainer" class="text-xs font-bold mt-2 flex items-center gap-1.5">
+            <span id="roiBadge" class="px-2 py-0.5 rounded-full text-xs">0% ROI</span>
+            <span class="text-gray-400 font-normal">Return on Costs</span>
+          </p>
+        </div>
+        <div id="profitIconContainer" class="w-12 h-12 rounded-xl flex items-center justify-center text-xl shadow-sm transition-transform duration-300 group-hover:scale-110">
+          <i id="profitIcon" class="fa-solid fa-chart-line"></i>
+        </div>
+      </div>
+      
+      <!-- Progress visualizer -->
+      <div class="mt-6">
+        <div class="flex justify-between text-xs text-gray-400 dark:text-gray-500 mb-1">
+          <span>Profit Margin</span>
+          <span id="marginPercentage">0%</span>
+        </div>
+        <div class="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden">
+          <div id="marginBar" class="h-full bg-blue-500 rounded-full transition-all duration-700" style="width: 0%;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2: Current Month vs Previous Month -->
+    <div class="glass-card rounded-2xl p-6 relative overflow-hidden group">
+      <div class="flex justify-between items-start">
+        <div>
+          <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold tracking-wider uppercase">Month-on-Month Comparison</p>
+          <div class="flex items-center gap-3 mt-3">
+            <span id="growthBadge" class="inline-flex items-center gap-1 text-xs font-black px-2.5 py-1 rounded-lg">
+              <i id="growthIcon" class="fa-solid"></i>
+              <span id="growthPercent">0%</span>
+            </span>
+            <span class="text-xs text-gray-400">vs Previous Month</span>
+          </div>
+        </div>
+        <div class="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-500 dark:text-indigo-400 flex items-center justify-center text-xl shadow-sm">
+          <i class="fa-solid fa-arrows-spin"></i>
+        </div>
+      </div>
+      
+      <!-- Mini comparison bar chart representation -->
+      <div class="mt-6 space-y-3">
+        <div>
+          <div class="flex justify-between text-xs font-semibold mb-1">
+            <span class="text-gray-500 dark:text-gray-400">Current Month</span>
+            <span id="currMonthVal" class="text-gray-700 dark:text-gray-300">₹0.00 (0% margin)</span>
+          </div>
+          <div class="w-full bg-gray-200 dark:bg-gray-700 h-1.5 rounded-full overflow-hidden">
+            <div id="currMonthBar" class="h-full bg-indigo-500 rounded-full transition-all duration-700" style="width: 0%;"></div>
+          </div>
+        </div>
+        <div>
+          <div class="flex justify-between text-xs font-semibold mb-1">
+            <span class="text-gray-400">Previous Month</span>
+            <span id="prevMonthVal" class="text-gray-400">₹0.00 (0% margin)</span>
+          </div>
+          <div class="w-full bg-gray-200/50 dark:bg-gray-700/50 h-1.5 rounded-full overflow-hidden">
+            <div id="prevMonthBar" class="h-full bg-gray-400 rounded-full transition-all duration-700" style="width: 0%;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3: Total Expenses & Daily Charges -->
+    <div class="glass-card rounded-2xl p-6 relative overflow-hidden group">
+      <div class="flex justify-between items-start">
+        <div>
+          <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold tracking-wider uppercase">Basic Charges & Expenses</p>
+          <h3 id="totalExpensesAmount" class="text-3xl font-black text-gray-800 dark:text-white mt-3">
+            ₹0.00
+          </h3>
+          <p class="text-xs text-gray-400 mt-2 flex items-center gap-1.5">
+            <i class="fa-solid fa-receipt text-blue-500"></i>
+            <span>Includes Staff Salaries & Utilities</span>
+          </p>
+        </div>
+        <button onclick="openAddExpenseModal()" class="w-12 h-12 rounded-xl bg-orange-50 dark:bg-orange-950/20 text-orange-500 dark:text-orange-400 flex items-center justify-center text-xl shadow-sm hover:bg-orange-100 dark:hover:bg-orange-900/30 transition-colors cursor-pointer" title="Add Daily Charge">
+          <i class="fa-solid fa-plus"></i>
+        </button>
+      </div>
+
+      <!-- Costs breakdown progress -->
+      <div class="mt-6 space-y-2">
+        <div class="flex justify-between text-xs text-gray-400">
+          <span>Cost Structure</span>
+          <span id="costStructureRatio">COGS 0% / Exp 0%</span>
+        </div>
+        <div class="w-full bg-gray-200 dark:bg-gray-700 h-2.5 rounded-full flex overflow-hidden">
+          <div id="cogsBar" class="h-full bg-blue-400" style="width: 0%;"></div>
+          <div id="expensesBar" class="h-full bg-orange-400" style="width: 0%;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detailed Charts & Charges Timeline -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Left: Timeline of Expenses (Daily Charges) -->
+    <div class="lg:col-span-2 glass-card rounded-2xl overflow-hidden flex flex-col h-[480px]">
+      <div class="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/10">
+        <div>
+          <h3 class="font-bold text-lg text-gray-800 dark:text-gray-100">Daily Charges Log</h3>
+          <p class="text-xs text-gray-400">Basic day-to-day operation costs recorded.</p>
+        </div>
+        <button onclick="openAddExpenseModal()" class="text-xs font-bold text-primary dark:text-blue-400 hover:underline flex items-center gap-1">
+          <i class="fa-solid fa-plus"></i> Add Charge
+        </button>
+      </div>
+      
+      <!-- Expense log timeline content -->
+      <div id="expensesTimelineBody" class="flex-1 overflow-y-auto p-6 space-y-4">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- Right: Expense Trend Chart (SVG Sparkline) -->
+    <div class="glass-card rounded-2xl overflow-hidden flex flex-col h-[480px]">
+      <div class="p-6 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/10">
+        <h3 class="font-bold text-lg text-gray-800 dark:text-gray-100">Charges Timeline</h3>
+        <p class="text-xs text-gray-400">Expense pattern over the filtered range.</p>
+      </div>
+      
+      <div class="flex-1 flex flex-col justify-center items-center p-6 relative">
+        <div id="sparklineWrapper" class="w-full flex-1 flex flex-col justify-center items-center">
+          <!-- Sparkline SVG will be injected here by JS -->
+        </div>
+        <div class="w-full text-center mt-4 border-t border-gray-100 dark:border-gray-700 pt-4">
+          <span class="text-xs text-gray-400">Horizontal: Days &nbsp;|&nbsp; Vertical: Expense Volume</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supplier Products Inventories -->
+  <div class="glass-card rounded-2xl overflow-hidden">
+    <div class="p-6 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/10">
+      <h3 class="font-bold text-lg text-gray-800 dark:text-gray-100">Supplier Products & Inventories</h3>
+      <p class="text-xs text-gray-400">Active stock, purchase costs, retail margins, and supply levels by supplier.</p>
+    </div>
+    
+    <div class="divide-y divide-gray-100 dark:divide-gray-700" id="supplierAccordionBody">
+      <!-- Injected by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- Beautiful Floating Add-Expense Modal (Transitioning) -->
+<div id="expenseModal" class="fixed inset-0 bg-gray-900/60 z-[200] hidden backdrop-blur-sm transition-opacity opacity-0 flex items-center justify-center p-4">
+  <div id="expenseModalBox" class="bg-white dark:bg-darkcard rounded-2xl shadow-2xl max-w-md w-full transform scale-95 transition-all duration-300 opacity-0 overflow-hidden border border-gray-200 dark:border-gray-700">
+    <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/30">
+      <h3 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+        <i class="fa-solid fa-wallet text-orange-500"></i> Record Daily Charge / Expense
+      </h3>
+      <button onclick="closeExpenseModal()" class="text-gray-400 hover:text-gray-500 focus:outline-none"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    
+    <form id="expenseForm" onsubmit="submitExpense(event)" class="p-6 space-y-4">
+      {% csrf_token %}
+      <div>
+        <label for="expenseTitle" class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Expense Title / Category *</label>
+        <input type="text" id="expenseTitle" required placeholder="e.g., Staff Salary, Electricity, Tea & Snacks" 
+               class="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+      </div>
+      
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label for="expenseAmount" class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Amount (₹) *</label>
+          <input type="number" step="0.01" id="expenseAmount" required placeholder="0.00" 
+                 class="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+        </div>
+        <div>
+          <label for="expenseDate" class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Date</label>
+          <input type="date" id="expenseDate" required
+                 class="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+        </div>
+      </div>
+      
+      <div>
+        <label for="expenseDescription" class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Description / Notes</label>
+        <textarea id="expenseDescription" rows="3" placeholder="Optional details..."
+                  class="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"></textarea>
+      </div>
+      
+      <div class="flex justify-end gap-3 pt-4 border-t border-gray-100 dark:border-gray-700">
+        <button type="button" onclick="closeExpenseModal()" 
+                class="px-5 py-2.5 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-200 text-sm font-semibold rounded-xl transition-colors">
+          Cancel
+        </button>
+        <button type="submit" 
+                class="px-5 py-2.5 bg-primary hover:bg-blue-600 text-white text-sm font-semibold rounded-xl shadow-md shadow-blue-500/20 hover:shadow-blue-500/35 transition-all">
+          Record Expense
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  let activePeriod = 30;
+
+  // Toggle supplier accordion
+  window.toggleSupplierAccordion = function(element) {
+    const parent = element.closest('.accordion-item');
+    const content = parent.querySelector('.accordion-content');
+    const chevron = element.querySelector('.fa-chevron-down');
+    
+    if (parent.classList.contains('accordion-open')) {
+      parent.classList.remove('accordion-open');
+      content.style.maxHeight = '0';
+      chevron.style.transform = 'rotate(0deg)';
+    } else {
+      // Close others
+      document.querySelectorAll('.accordion-item').forEach(item => {
+        item.classList.remove('accordion-open');
+        item.querySelector('.accordion-content').style.maxHeight = '0';
+        const itemChevron = item.querySelector('.fa-chevron-down');
+        if (itemChevron) itemChevron.style.transform = 'rotate(0deg)';
+      });
+      
+      parent.classList.add('accordion-open');
+      content.style.maxHeight = content.scrollHeight + 'px';
+      chevron.style.transform = 'rotate(180deg)';
+    }
+  }
+
+  // Load dashboard data
+  function fetchDashboardData(days) {
+    // Show loaders or overlay if needed, but since it is fast we just fetch directly
+    fetch(`/api/productive-dashboard/?days=${days}`)
+      .then(res => {
+        if (!res.ok) throw new Error("Could not retrieve dashboard data");
+        return res.json();
+      })
+      .then(data => {
+        renderDashboard(data);
+      })
+      .catch(err => {
+        console.error(err);
+        showAlert("Error", "Failed to load productive dashboard statistics. Please try again.", "error");
+      });
+  }
+
+  function changePeriod(days) {
+    activePeriod = days;
+    // Set active button state
+    document.querySelectorAll('.pill-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById(`btn-${days}`).classList.add('active');
+    fetchDashboardData(days);
+  }
+
+  // Render P&L statistics, lists, tables, charts
+  function renderDashboard(data) {
+    // Period P&L Card
+    const pl = data.period_pl;
+    const netProfit = pl.net_profit;
+    const profitAmtEl = document.getElementById('netProfitAmount');
+    const profitCardEl = document.getElementById('profitCard');
+    const profitCardGlow = document.getElementById('profitCardGlow');
+    const profitIconContainer = document.getElementById('profitIconContainer');
+    const profitIcon = document.getElementById('profitIcon');
+    const roiBadge = document.getElementById('roiBadge');
+    
+    profitAmtEl.innerHTML = `${netProfit >= 0 ? '' : '-'}&#8377;${Math.abs(netProfit).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+    
+    // Emerald color theme for profit, rose color theme for loss
+    if (netProfit >= 0) {
+      profitCardEl.className = 'glass-card rounded-2xl p-6 relative overflow-hidden group border-emerald-500/30 dark:border-emerald-500/20 bg-emerald-50/5 dark:bg-emerald-950/5 glow-green';
+      profitCardGlow.className = 'absolute -right-20 -bottom-20 w-48 h-48 rounded-full blur-3xl opacity-20 transition-all duration-500 bg-emerald-500';
+      profitIconContainer.className = 'w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-500 dark:text-emerald-400 flex items-center justify-center text-xl shadow-sm transition-transform duration-300 group-hover:scale-110';
+      profitIcon.className = 'fa-solid fa-chart-line';
+      
+      roiBadge.className = 'px-2 py-0.5 rounded-full text-xs bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300';
+      roiBadge.textContent = `${pl.roi_percentage}% ROI`;
+    } else {
+      profitCardEl.className = 'glass-card rounded-2xl p-6 relative overflow-hidden group border-red-500/30 dark:border-red-500/20 bg-red-50/5 dark:bg-red-950/5 glow-red';
+      profitCardGlow.className = 'absolute -right-20 -bottom-20 w-48 h-48 rounded-full blur-3xl opacity-20 transition-all duration-500 bg-red-500';
+      profitIconContainer.className = 'w-12 h-12 rounded-xl bg-red-50 dark:bg-red-900/30 text-red-500 dark:text-red-400 flex items-center justify-center text-xl shadow-sm transition-transform duration-300 group-hover:scale-110';
+      profitIcon.className = 'fa-solid fa-chart-line-down';
+      
+      roiBadge.className = 'px-2 py-0.5 rounded-full text-xs bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300';
+      roiBadge.textContent = `${pl.roi_percentage}% Loss`;
+    }
+    
+    // Profit margin progress bar
+    document.getElementById('marginPercentage').textContent = `${pl.margin_percentage}%`;
+    // Cap at 100 for visual sanity
+    document.getElementById('marginBar').style.width = `${Math.min(Math.max(pl.margin_percentage, 0), 100)}%`;
+    if (netProfit < 0) {
+      document.getElementById('marginBar').className = 'h-full bg-red-500 rounded-full transition-all duration-700';
+    } else {
+      document.getElementById('marginBar').className = 'h-full bg-emerald-500 rounded-full transition-all duration-700';
+    }
+
+    // MoM comparison calculations
+    const currMonthPl = data.current_month_pl;
+    const prevMonthPl = data.previous_month_pl;
+    
+    document.getElementById('currMonthVal').textContent = `₹${currMonthPl.net_profit.toLocaleString('en-IN', {maximumFractionDigits:0})} (${currMonthPl.margin_percentage}% margin)`;
+    document.getElementById('prevMonthVal').textContent = `₹${prevMonthPl.net_profit.toLocaleString('en-IN', {maximumFractionDigits:0})} (${prevMonthPl.margin_percentage}% margin)`;
+    
+    // Visual bar graphs
+    const maxVal = Math.max(Math.abs(currMonthPl.net_profit), Math.abs(prevMonthPl.net_profit), 1);
+    document.getElementById('currMonthBar').style.width = `${Math.round(Math.abs(currMonthPl.net_profit) / maxVal * 100)}%`;
+    document.getElementById('prevMonthBar').style.width = `${Math.round(Math.abs(prevMonthPl.net_profit) / maxVal * 100)}%`;
+    if (currMonthPl.net_profit < 0) document.getElementById('currMonthBar').className = 'h-full bg-red-500 rounded-full transition-all duration-700';
+    else document.getElementById('currMonthBar').className = 'h-full bg-indigo-500 rounded-full transition-all duration-700';
+
+    // MoM growth percentage
+    let growthPct = 0;
+    if (prevMonthPl.net_profit !== 0) {
+      growthPct = ((currMonthPl.net_profit - prevMonthPl.net_profit) / Math.abs(prevMonthPl.net_profit)) * 100;
+    } else if (currMonthPl.net_profit > 0) {
+      growthPct = 100;
+    } else if (currMonthPl.net_profit < 0) {
+      growthPct = -100;
+    }
+    
+    const growthBadge = document.getElementById('growthBadge');
+    const growthIcon = document.getElementById('growthIcon');
+    const growthPercent = document.getElementById('growthPercent');
+    
+    growthPercent.textContent = `${Math.abs(growthPct).toFixed(1)}%`;
+    if (growthPct >= 0) {
+      growthBadge.className = 'inline-flex items-center gap-1 text-xs font-black px-2.5 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400';
+      growthIcon.className = 'fa-solid fa-arrow-trend-up';
+    } else {
+      growthBadge.className = 'inline-flex items-center gap-1 text-xs font-black px-2.5 py-1 rounded-lg bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400';
+      growthIcon.className = 'fa-solid fa-arrow-trend-down';
+    }
+
+    // Expense statistics card
+    document.getElementById('totalExpensesAmount').textContent = `₹${pl.expenses.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+    
+    // Cost breakdown visualization (COGS vs Expenses ratio)
+    const totalCost = pl.cogs + pl.expenses;
+    const cogsPct = totalCost > 0 ? Math.round(pl.cogs / totalCost * 100) : 0;
+    const expPct = totalCost > 0 ? Math.round(pl.expenses / totalCost * 100) : 0;
+    document.getElementById('costStructureRatio').textContent = `COGS ${cogsPct}% / Exp ${expPct}%`;
+    document.getElementById('cogsBar').style.width = `${cogsPct}%`;
+    document.getElementById('expensesBar').style.width = `${expPct}%`;
+
+    // Daily charges logs timeline rendering
+    const timelineBody = document.getElementById('expensesTimelineBody');
+    timelineBody.innerHTML = '';
+    
+    if (data.expenses.length === 0) {
+      timelineBody.innerHTML = `
+        <div class="h-full flex flex-col justify-center items-center text-center py-10">
+          <div class="w-16 h-16 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-2xl text-gray-400 mb-3 shadow-inner">
+            <i class="fa-solid fa-receipt"></i>
+          </div>
+          <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">No operational expenses logged</p>
+          <p class="text-xs text-gray-400 mt-1">Add expenses like rent, staff salary, stationery, etc.</p>
+        </div>
+      `;
+    } else {
+      data.expenses.forEach(exp => {
+        const dateObj = new Date(exp.date);
+        const formattedDate = dateObj.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+        
+        // Pick an icon based on title/category keywords
+        let iconClass = 'fa-receipt bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400';
+        const titleL = exp.title.toLowerCase();
+        if (titleL.includes('salary') || titleL.includes('wage') || titleL.includes('staff')) {
+          iconClass = 'fa-wallet bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400';
+        } else if (titleL.includes('rent') || titleL.includes('shop') || titleL.includes('office')) {
+          iconClass = 'fa-building bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400';
+        } else if (titleL.includes('tea') || titleL.includes('coffee') || titleL.includes('snack') || titleL.includes('food')) {
+          iconClass = 'fa-coffee bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400';
+        } else if (titleL.includes('bill') || titleL.includes('electricity') || titleL.includes('water') || titleL.includes('power')) {
+          iconClass = 'fa-bolt bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400';
+        }
+        
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'timeline-item flex items-start gap-4 p-3 rounded-xl hover:bg-gray-50/80 dark:hover:bg-gray-800/40 border border-transparent hover:border-gray-200/40 dark:hover:border-gray-700/30';
+        itemDiv.innerHTML = `
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center text-sm shadow-sm shrink-0">
+            <i class="fa-solid ${iconClass}"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex justify-between items-start gap-2">
+              <h4 class="text-sm font-semibold text-gray-800 dark:text-gray-200 truncate">${exp.title}</h4>
+              <span class="text-sm font-bold text-gray-900 dark:text-white shrink-0">₹${exp.amount.toLocaleString('en-IN', {minimumFractionDigits: 2})}</span>
+            </div>
+            <p class="text-xs text-gray-400 mt-0.5">${formattedDate}</p>
+            ${exp.description ? `<p class="text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">${exp.description}</p>` : ''}
+          </div>
+        `;
+        timelineBody.appendChild(itemDiv);
+      });
+    }
+
+    // Sparkline expense trend chart (SVG render)
+    renderSparkline(data.daily_expenses_timeline);
+
+    // Supplier Accordion rendering
+    const accordionBody = document.getElementById('supplierAccordionBody');
+    accordionBody.innerHTML = '';
+    
+    if (data.supplier_products.length === 0) {
+      accordionBody.innerHTML = `
+        <div class="p-8 text-center text-gray-500">
+          <i class="fa-solid fa-truck text-3xl mb-2 text-gray-300"></i>
+          <p class="text-sm">No suppliers registered in the database.</p>
+        </div>
+      `;
+    } else {
+      data.supplier_products.forEach((sup, idx) => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'accordion-item';
+        
+        let productsHtml = '';
+        if (sup.products.length === 0) {
+          productsHtml = `
+            <tr>
+              <td colspan="6" class="py-6 text-center text-xs text-gray-400 dark:text-gray-500">
+                No products recorded for this supplier.
+              </td>
+            </tr>
+          `;
+        } else {
+          sup.products.forEach(p => {
+            const marginAmount = p.price - p.buy_price;
+            const marginPct = p.buy_price > 0 ? (marginAmount / p.buy_price * 100).toFixed(1) : 0;
+            
+            // Stock indicators
+            let stockBadge = 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400';
+            if (p.stock_quantity === 0) {
+              stockBadge = 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 animate-pulse';
+            } else if (p.stock_quantity < 5) {
+              stockBadge = 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400';
+            }
+            
+            productsHtml += `
+              <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-800/20 text-xs">
+                <td class="py-3.5 px-6 font-semibold text-gray-800 dark:text-gray-200">${p.brand} ${p.name}</td>
+                <td class="py-3.5 px-6 font-mono text-gray-500 dark:text-gray-400">${p.model || 'N/A'}</td>
+                <td class="py-3.5 px-6"><span class="px-2 py-0.5 rounded-full font-bold ${stockBadge}">${p.stock_quantity} left</span></td>
+                <td class="py-3.5 px-6 font-semibold text-gray-600 dark:text-gray-400">₹${p.buy_price.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+                <td class="py-3.5 px-6 font-semibold text-gray-800 dark:text-gray-200">₹${p.price.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+                <td class="py-3.5 px-6 text-emerald-600 dark:text-emerald-400 font-bold">₹${marginAmount.toLocaleString('en-IN', {minimumFractionDigits: 2})} (${marginPct}%)</td>
+              </tr>
+            `;
+          });
+        }
+        
+        itemDiv.innerHTML = `
+          <div class="accordion-header flex justify-between items-center px-6 py-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors" onclick="toggleSupplierAccordion(this)">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-primary dark:text-blue-400 flex items-center justify-center">
+                <i class="fa-solid fa-truck"></i>
+              </div>
+              <div>
+                <h4 class="font-bold text-sm text-gray-800 dark:text-gray-200">${sup.supplier_name}</h4>
+                <p class="text-xs text-gray-400 mt-0.5">${sup.products_count} registered products</p>
+              </div>
+            </div>
+            <i class="fa-solid fa-chevron-down text-gray-400 transition-transform duration-300"></i>
+          </div>
+          
+          <div class="accordion-content">
+            <div class="overflow-x-auto border-t border-gray-100 dark:border-gray-700 bg-gray-50/30 dark:bg-gray-800/5">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="text-gray-400 text-[10px] uppercase font-bold tracking-wider border-b border-gray-100 dark:border-gray-700">
+                    <th class="py-3 px-6">Product</th>
+                    <th class="py-3 px-6">Model</th>
+                    <th class="py-3 px-6">Stock Status</th>
+                    <th class="py-3 px-6">Buy Price</th>
+                    <th class="py-3 px-6">Retail Price</th>
+                    <th class="py-3 px-6">Est. Margin</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                  ${productsHtml}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+        accordionBody.appendChild(itemDiv);
+      });
+      
+      // Auto open first supplier
+      const firstHeader = accordionBody.querySelector('.accordion-header');
+      if (firstHeader) toggleSupplierAccordion(firstHeader);
+    }
+  }
+
+  // Draw expense SVG sparkline chart
+  function renderSparkline(timeline) {
+    const wrapper = document.getElementById('sparklineWrapper');
+    wrapper.innerHTML = '';
+    
+    if (timeline.length === 0) return;
+    
+    const width = wrapper.clientWidth || 300;
+    const height = 300;
+    const padding = 30;
+    
+    const points = timeline.map(t => t.amount);
+    const maxVal = Math.max(...points, 100);
+    const minVal = 0;
+    
+    // Build path coordinates
+    const stepX = (width - padding * 2) / Math.max(timeline.length - 1, 1);
+    
+    let pathD = '';
+    let fillD = `M ${padding} ${height - padding}`;
+    
+    const graphPoints = [];
+    
+    timeline.forEach((item, idx) => {
+      const x = padding + idx * stepX;
+      // Invert Y coordinate since SVG (0,0) is top-left
+      const y = height - padding - ((item.amount - minVal) / (maxVal - minVal)) * (height - padding * 2);
+      
+      graphPoints.push({ x, y, date: item.date, amount: item.amount });
+      
+      if (idx === 0) {
+        pathD = `M ${x} ${y}`;
+      } else {
+        pathD += ` L ${x} ${y}`;
+      }
+      fillD += ` L ${x} ${y}`;
+    });
+    
+    fillD += ` L ${padding + (timeline.length - 1) * stepX} ${height - padding} Z`;
+    
+    // Draw SVG
+    let svgHtml = `
+      <svg width="${width}" height="${height}" class="overflow-visible" style="touch-action: none;">
+        <defs>
+          <linearGradient id="expGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#f97316" stop-opacity="0.3"/>
+            <stop offset="100%" stop-color="#f97316" stop-opacity="0.0"/>
+          </linearGradient>
+        </defs>
+        
+        <!-- Grid horizontal lines -->
+        <line x1="${padding}" y1="${padding}" x2="${width - padding}" y2="${padding}" stroke="#e5e7eb" class="dark:stroke-gray-700" stroke-width="1" stroke-dasharray="4"/>
+        <line x1="${padding}" y1="${height/2}" x2="${width - padding}" y2="${height/2}" stroke="#e5e7eb" class="dark:stroke-gray-700" stroke-width="1" stroke-dasharray="4"/>
+        <line x1="${padding}" y1="${height - padding}" x2="${width - padding}" y2="${height - padding}" stroke="#d1d5db" class="dark:stroke-gray-600" stroke-width="1.5"/>
+        
+        <!-- Y-axis labels -->
+        <text x="${padding - 5}" y="${padding + 4}" text-anchor="end" class="fill-gray-400 text-[9px] font-mono font-bold">₹${maxVal.toFixed(0)}</text>
+        <text x="${padding - 5}" y="${height/2 + 4}" text-anchor="end" class="fill-gray-400 text-[9px] font-mono font-bold">₹${(maxVal/2).toFixed(0)}</text>
+        <text x="${padding - 5}" y="${height - padding + 4}" text-anchor="end" class="fill-gray-400 text-[9px] font-mono font-bold">₹0</text>
+        
+        <!-- Shaded area -->
+        <path d="${fillD}" fill="url(#expGrad)" />
+        
+        <!-- Line path -->
+        <path d="${pathD}" fill="none" stroke="#f97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    `;
+    
+    // Dots & Interactive Tooltips
+    graphPoints.forEach((pt, idx) => {
+      // Show dot for all points if count is small, else only end points and peak points
+      const isCriticalPoint = timeline.length < 15 || idx === 0 || idx === timeline.length - 1 || pt.amount === maxVal;
+      
+      if (isCriticalPoint) {
+        svgHtml += `
+          <circle cx="${pt.x}" cy="${pt.y}" r="4" class="fill-white stroke-orange-500 pointer-events-auto cursor-pointer" stroke-width="2" id="pt-${idx}" />
+        `;
+      }
+    });
+    
+    svgHtml += `</svg>`;
+    
+    wrapper.innerHTML = svgHtml;
+  }
+
+  // Expense Modal Functions
+  window.openAddExpenseModal = function() {
+    // Set date field default value to today's date
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('expenseDate').value = today;
+    
+    const modal = document.getElementById('expenseModal');
+    const modalBox = document.getElementById('expenseModalBox');
+    
+    modal.classList.remove('hidden');
+    // Micro-delay to trigger transitions
+    setTimeout(() => {
+      modal.classList.remove('opacity-0');
+      modalBox.classList.remove('scale-95', 'opacity-0');
+      modalBox.classList.add('scale-100', 'opacity-100');
+    }, 20);
+  }
+
+  window.closeExpenseModal = function() {
+    const modal = document.getElementById('expenseModal');
+    const modalBox = document.getElementById('expenseModalBox');
+    
+    modal.classList.add('opacity-0');
+    modalBox.classList.remove('scale-100', 'opacity-100');
+    modalBox.classList.add('scale-95', 'opacity-0');
+    
+    setTimeout(() => {
+      modal.classList.add('hidden');
+      document.getElementById('expenseForm').reset();
+    }, 300);
+  }
+
+  // Submit Expense AJAX
+  window.submitExpense = function(event) {
+    event.preventDefault();
+    
+    const title = document.getElementById('expenseTitle').value;
+    const amount = document.getElementById('expenseAmount').value;
+    const date = document.getElementById('expenseDate').value;
+    const description = document.getElementById('expenseDescription').value;
+    
+    // Retrieve django csrf token
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    
+    fetch('/api/productive-dashboard/create-expense/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken
+      },
+      body: JSON.stringify({ title, amount, date, description })
+    })
+    .then(res => {
+      if (!res.ok) throw new Error("Failed to record expense");
+      return res.json();
+    })
+    .then(data => {
+      closeExpenseModal();
+      showAlert("Success", `Expense "${data.title}" of ₹${data.amount} recorded successfully.`, "success");
+      // Refresh active period stats
+      fetchDashboardData(activePeriod);
+    })
+    .catch(err => {
+      console.error(err);
+      showAlert("Error", "Failed to create expense. Please check your parameters and try again.", "error");
+    });
+  }
+
+  // Initialize page on load
+  document.addEventListener('DOMContentLoaded', () => {
+    // Initial fetch for 30 Days stats
+    changePeriod(30);
+  });
+</script>
+{% endblock %}

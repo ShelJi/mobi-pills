@@ -84,6 +84,10 @@
           <i class="fa-solid fa-chart-pie w-6"></i>
           <span class="font-medium">Dashboard</span>
         </a>
+        <a href="{% url 'productive_dashboard' %}" class="flex items-center px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors {% if request.resolver_match.url_name == 'productive_dashboard' %}bg-blue-50 text-primary dark:bg-blue-900/30{% endif %}">
+          <i class="fa-solid fa-chart-line w-6"></i>
+          <span class="font-medium">Productive Dashboard</span>
+        </a>
         <a href="{% url 'billing' %}" class="flex items-center px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors {% if request.resolver_match.url_name == 'billing' %}bg-blue-50 text-primary dark:bg-blue-900/30{% endif %}">
           <i class="fa-solid fa-file-invoice-dollar w-6"></i>
           <span class="font-medium">Billing (POS)</span>

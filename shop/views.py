@@ -58,5 +58,9 @@ def categories_view(request):
 def suppliers_view(request):
     return render(request, 'shop/suppliers.html')
 
+@login_required(login_url='/admin/login/')
+def productive_dashboard_view(request):
+    return render(request, 'shop/productive_dashboard.html')
+
 def login_view(request):
     return redirect('/admin/login/')

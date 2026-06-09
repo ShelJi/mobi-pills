@@ -391,8 +391,8 @@
       
       @media print {
         @page {
-          size: A4;
-          margin: 8mm;
+          size: A4 portrait;
+          margin: 10mm 12mm 10mm 12mm;
         }
       
         html,
@@ -401,8 +401,9 @@
           color: #000 !important;
           margin: 0 !important;
           padding: 0 !important;
-          font-family: Arial, sans-serif !important; /* lighter than Inter */
+          font-family: Arial, sans-serif !important;
           font-size: 11px !important;
+          line-height: 1.4 !important;
         }
       
         .print-hidden,
@@ -423,7 +424,6 @@
           background: #fff !important;
         }
       
-        /* Remove all expensive effects */
         *,
         *::before,
         *::after {
@@ -434,57 +434,163 @@
       
         .invoice-header {
           margin-bottom: 12px !important;
-          padding-bottom: 8px !important;
+          padding-bottom: 6px !important;
+          border-bottom: 1px solid #ddd !important;
         }
       
         .company-name {
           font-size: 20px !important;
+          font-weight: bold !important;
         }
       
         .company-tagline {
+          font-size: 9px !important;
+          letter-spacing: 2px !important;
+        }
+
+        .company-details {
+          margin-top: 6px !important;
           font-size: 10px !important;
-          letter-spacing: 1px !important;
+        }
+
+        .company-details p {
+          margin-bottom: 2px !important;
         }
       
         .invoice-info-grid {
-          gap: 8px !important;
-          margin-bottom: 12px !important;
+          display: grid !important;
+          grid-template-columns: 1fr 1fr !important;
+          gap: 12px !important;
+          margin-bottom: 15px !important;
         }
       
-        .info-card,
-        .totals-box {
-          padding: 8px !important;
-          border: 1px solid #ddd !important;
+        .info-card {
+          padding: 10px !important;
+          border: 1px solid #cbd5e1 !important;
+          border-radius: 8px !important;
           background: #fff !important;
+        }
+
+        .info-title {
+          font-size: 9px !important;
+          margin-bottom: 4px !important;
+        }
+
+        .customer-name {
+          font-size: 13px !important;
+        }
+
+        .invoice-number {
+          font-size: 15px !important;
+        }
+      
+        .status-badge {
+          margin-top: 4px !important;
+          padding: 2px 8px !important;
+          font-size: 9px !important;
+          border: 1px solid #cbd5e1 !important;
         }
       
         .table-wrapper {
-          border: 1px solid #ddd !important;
-          margin-bottom: 10px !important;
+          border: 1px solid #cbd5e1 !important;
+          border-radius: 8px !important;
+          margin-bottom: 15px !important;
         }
       
-        .invoice-table th,
-        .invoice-table td {
-          padding: 6px !important;
+        .invoice-table th {
+          padding: 6px 8px !important;
           font-size: 10px !important;
+          background: #f8fafc !important;
+          border-bottom: 1px solid #cbd5e1 !important;
+        }
+
+        .invoice-table td {
+          padding: 6px 8px !important;
+          font-size: 10px !important;
+          border-bottom: 1px solid #f1f5f9 !important;
+        }
+
+        .item-name {
+          font-size: 10px !important;
+        }
+
+        .item-meta {
+          font-size: 8px !important;
+          margin-top: 1px !important;
         }
       
         .summary-section {
-          gap: 12px !important;
+          display: flex !important;
+          flex-direction: row !important;
+          justify-content: space-between !important;
+          gap: 20px !important;
+          page-break-inside: avoid !important;
         }
       
         .terms {
-          font-size: 10px !important;
+          max-width: 50% !important;
+          font-size: 9px !important;
+        }
+
+        .terms h4 {
+          margin-bottom: 4px !important;
+        }
+
+        .totals-box {
+          width: 240px !important;
+          padding: 10px !important;
+          border: 1px solid #cbd5e1 !important;
+          border-radius: 8px !important;
+          background: #fff !important;
+        }
+
+        .total-row {
+          margin-bottom: 4px !important;
+          font-size: 9px !important;
+        }
+
+        .grand-total {
+          border-top: 1px solid #cbd5e1 !important;
+          padding-top: 6px !important;
+          margin-top: 6px !important;
+        }
+
+        .grand-total-label {
+          font-size: 11px !important;
         }
       
         .grand-total-value {
           color: #000 !important;
-          font-size: 18px !important;
+          font-size: 14px !important;
+        }
+
+        .amount-words {
+          margin-top: 6px !important;
+          font-size: 9px !important;
+        }
+
+        .payment-info {
+          margin-top: 4px !important;
+          font-size: 9px !important;
         }
       
         .signature-section {
-          margin-top: 20px !important;
-          page-break-inside: avoid;
+          margin-top: 35px !important;
+          display: flex !important;
+          flex-direction: row !important;
+          justify-content: space-between !important;
+          page-break-inside: avoid !important;
+        }
+
+        .signature-box {
+          width: 180px !important;
+          font-size: 9px !important;
+        }
+      
+        .signature-line {
+          margin-top: 35px !important;
+          border-top: 1px solid #000 !important;
+          padding-top: 4px !important;
         }
       
         table,
@@ -548,7 +654,7 @@
               jpmobilestn@gmail.com
             </p>
 
-            <p>GSTIN: 27AAAAA0000A1Z5</p>
+            <!-- <p>GSTIN: 27AAAAA0000A1Z5</p> -->
           </div>
         </div>
 
@@ -616,12 +722,12 @@
               {% for item in order.items.all %}
                 <tr>
                   <td class="text-center">
-                    {% url 'billing' %}6
+                    {{ forloop.counter }}
                   </td>
 
                   <td>
                     <div class="item-name">
-                      {% url 'billing' %}7
+                      {{ item.product.name }}
                     </div>
 
                     <div class="item-meta">
@@ -629,16 +735,16 @@
                         {{ item.product.brand }}
                       {% endif %}
                       {% if item.product.imei %}
-                        | IMEI: {{ order.customer.name|default:'Walk-in Customer' }}2
+                        | IMEI: {{ item.product.imei }}
                       {% endif %}
                     </div>
                   </td>
 
-                  <td class="text-center">{{ order.customer.name|default:'Walk-in Customer' }}4</td>
+                  <td class="text-center">{{ item.quantity }}</td>
 
-                  <td class="text-right">₹{{ order.customer.name|default:'Walk-in Customer' }}5</td>
+                  <td class="text-right">₹{{ item.price_at_time|floatformat:2 }}</td>
 
-                  <td class="text-right">₹{{ order.customer.name|default:'Walk-in Customer' }}6</td>
+                  <td class="text-right">₹{{ item.total_price|floatformat:2 }}</td>
                 </tr>
               {% empty %}
                 <tr>
@@ -668,7 +774,7 @@
           <div class="totals-box">
             <div class="total-row">
               <span>Subtotal</span>
-              <span>₹{{ order.customer.name|default:'Walk-in Customer' }}9</span>
+              <span>₹{{ order.subtotal|floatformat:2 }}</span>
             </div>
 
             <div class="total-row discount">
@@ -711,16 +817,16 @@
         </div>
 
         <!-- Signature Section -->
-        <div class="signature-section">
+        <!-- <div class="signature-section">
           <div class="signature-box">
-            <div class="signature-line">Customer Signature</div>
-          </div>
+            <div class="signature-line">Thank you for your business!</div>
+          </div> -->
 
-          <div class="signature-box">
+          <!-- <div class="signature-box">
             <div class="signature-line">Authorized Signatory</div>
 
             <strong>JP MOBILES</strong>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>

@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 import uuid
 
 from PIL import Image, ImageOps
@@ -147,3 +148,13 @@ class OrderItem(models.Model):
     @property
     def total_price(self):
         return self.quantity * self.price_at_time
+
+class Expense(models.Model):
+    title = models.CharField(max_length=200)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    date = models.DateField(default=timezone.now)
+    description = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.title} - ₹{self.amount} on {self.date}"
