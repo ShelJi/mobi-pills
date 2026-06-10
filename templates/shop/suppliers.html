@@ -23,6 +23,7 @@
             <th class="py-4 px-6 font-medium">Phone 2</th>
             <th class="py-4 px-6 font-medium">Email</th>
             <th class="py-4 px-6 font-medium">Address</th>
+            <th class="py-4 px-6 font-medium">Joined Date</th>
             <th class="py-4 px-6 font-medium text-right">Actions</th>
           </tr>
         </thead>
@@ -138,12 +139,13 @@
 		const filtered = suppliers.filter((s) => {
 			const search = filterText.toLowerCase();
 			const nameMatch = s.name ? String(s.name).toLowerCase().includes(search) : false;
-			const phoneMatch = s.phone ? String(s.phone).toLowerCase().includes(search) : false;
-			return nameMatch || phoneMatch;
+			const phone1Match = s.phone1 ? String(s.phone1).toLowerCase().includes(search) : false;
+			const phone2Match = s.phone2 ? String(s.phone2).toLowerCase().includes(search) : false;
+			return nameMatch || phone1Match || phone2Match;
 		});
 
 		if (filtered.length === 0) {
-			tbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-gray-500">No suppliers found</td></tr>`;
+			tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-gray-500">No suppliers found</td></tr>`;
 			return;
 		}
 

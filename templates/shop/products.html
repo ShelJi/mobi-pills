@@ -173,6 +173,7 @@
 		return cookieValue;
 	}
 
+	const csrftoken = getCookie("csrftoken");
 
 
 	function fetchCategories() {
@@ -274,7 +275,7 @@ function toggleImeiField() {
                         ${imgHtml}
                         <div>
                             <p class="font-bold text-gray-900 dark:text-white">${product.name}</p>
-                            <p class="text-xs text-gray-500">${product.imei || "No IMEI/SKU"}</p>
+                            <p class="text-xs text-gray-500">${product.imei || ""}</p>
                         </div>
                     </div>
                 </td>
@@ -322,6 +323,8 @@ function toggleImeiField() {
 			document.getElementById("quick_product").checked = product.quick_product;
 		} else {
 			document.getElementById("modalTitle").textContent = "Add New Product";
+			// Explicitly hide IMEI wrapper; form.reset() does not reset dynamic CSS visibility
+			document.getElementById("imeiWrapper").style.display = "none";
 		}
 
 		document.getElementById("productModal").classList.remove("hidden");

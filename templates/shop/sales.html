@@ -23,13 +23,23 @@
           <option value="">All Users</option>
         </select>
       </div>
-      <div class="md:col-span-4">
-        <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Export</label>
-        <div class="flex gap-2">
-          <button onclick="exportCSV()" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-3 rounded-lg shadow-sm transition-colors flex items-center justify-center text-sm"><i class="fa-solid fa-file-csv mr-2"></i> CSV</button>
-          <button onclick="exportPDF()" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-3 rounded-lg shadow-sm transition-colors flex items-center justify-center text-sm"><i class="fa-solid fa-file-pdf mr-2"></i> PDF</button>
-        </div>
-      </div>
+     <div class="hidden md:block md:col-span-4">
+  <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
+    Export
+  </label>
+
+  <div class="flex gap-2">
+    <button onclick="exportCSV()"
+      class="flex-1 bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-3 rounded-lg shadow-sm transition-colors flex items-center justify-center text-sm">
+      <i class="fa-solid fa-file-csv mr-2"></i> CSV
+    </button>
+
+    <button onclick="exportPDF()"
+      class="flex-1 bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-3 rounded-lg shadow-sm transition-colors flex items-center justify-center text-sm">
+      <i class="fa-solid fa-file-pdf mr-2"></i> PDF
+    </button>
+  </div>
+</div>
     </div>
   </div>
 

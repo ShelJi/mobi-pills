@@ -618,11 +618,17 @@
             <i class="fa-solid fa-receipt"></i>
             Billing
           </a>
-
-          <button onclick="window.print()" class="btn btn-primary">
-            <i class="fa-solid fa-print"></i>
-            Print Invoice
-          </button>
+<style>
+  @media screen and (max-width: 768px) {
+  #print-button {
+    display: none;
+  }
+}
+</style>
+  <button id="print-button" onclick="window.print()" class="btn btn-primary">
+    <i class="fa-solid fa-print"></i>
+    Print Invoice
+  </button>
         </div>
       </div>
 
