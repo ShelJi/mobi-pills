@@ -82,16 +82,21 @@ class Product(models.Model):
 
             img_io.seek(0)
 
-            # Rename file
-            file_name = os.path.splitext(
-                self.image.name
-            )[0] + ".webp"
+            file_name = f"{uuid.uuid4().hex}.webp"
 
             # Replace image
             self.image = ContentFile(
                 img_io.getvalue(),
                 name=file_name
             )
+            
+            if self.pk and self.image:
+                try:
+                    old_obj = Product.objects.get(pk=self.pk)
+                    if old_obj.image and old_obj.image != self.image:
+                        old_obj.image.delete(save=False)
+                except Product.DoesNotExist:
+                    pass
 
         super().save(*args, **kwargs)
 
