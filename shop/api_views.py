@@ -9,17 +9,19 @@ from datetime import timedelta, date
 from django.contrib.auth.models import User
 from .models import Category, Product, Customer, Order, Supplier, Expense, OrderItem
 from .serializers import CategorySerializer, ProductSerializer, CustomerSerializer, OrderSerializer, UserSerializer, SupplierSerializer
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-class UserViewSet(viewsets.ReadOnlyModelViewSet):
+
+class UserViewSet(LoginRequiredMixin, viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
 
-class CategoryViewSet(viewsets.ModelViewSet):
+class CategoryViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
-class ProductViewSet(viewsets.ModelViewSet):
+class ProductViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     parser_classes = [MultiPartParser, FormParser, JSONParser]
@@ -31,15 +33,15 @@ class ProductViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(products, many=True)
         return Response(serializer.data)
 
-class CustomerViewSet(viewsets.ModelViewSet):
+class CustomerViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
 
-class SupplierViewSet(viewsets.ModelViewSet):
+class SupplierViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
     queryset = Supplier.objects.all()
     serializer_class = SupplierSerializer
 
-class OrderViewSet(viewsets.ModelViewSet):
+class OrderViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
     queryset = Order.objects.all().order_by('-created_at')
     serializer_class = OrderSerializer
 
