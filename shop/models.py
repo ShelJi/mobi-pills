@@ -43,7 +43,7 @@ class Product(models.Model):
     stock_quantity = models.IntegerField(default=0)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='products')
     supplier = models.ForeignKey(Supplier, on_delete=models.SET_NULL, null=True, related_name='products')
-    image = models.ImageField(upload_to='product_images/', blank=True, null=True)
+    image = models.ImageField(upload_to='product_images/', blank=True, null=True, max_length=255)
     is_visible = models.BooleanField(default=True)
     quick_product = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
